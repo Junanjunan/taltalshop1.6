@@ -7,6 +7,8 @@ name = "pypi"
 django = "*"
 django-countries = "*"
 pillow = "*"
+pipenv-to-requirements = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 
