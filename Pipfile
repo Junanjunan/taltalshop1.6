@@ -9,6 +9,7 @@ django-countries = "*"
 pillow = "*"
 pipenv-to-requirements = "*"
 sentry-sdk = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
