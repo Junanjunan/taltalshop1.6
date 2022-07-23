@@ -43,7 +43,6 @@ class PaySaveView(LoggedInOnlyView, View):
         user = request.user
         imp_uid = request.POST.get("imp_uid")
         merchant_uid = request.POST.get("merchant_uid")
-        name = request.POST.get("name")
         item_pk = request.POST.get("item_pk")
         item = items_models.Item.objects.get(pk=item_pk)
         price = item.price
@@ -151,7 +150,6 @@ class PayDoneView(LoggedInOnlyView, View):
     def get(self, request, *args, **kwargs):
         payment = models.Payment.objects.get(
             merchant_uid=kwargs.get("merchant_uid"))
-        pxq = payment.item.price * payment.item_count
         context = {
             'payment': payment,
         }
@@ -195,7 +193,6 @@ class PaySaveCartView(LoggedInOnlyView, View):
         merchant_uid = request.POST.get("merchant_uid")
         paid_amount = request.POST.get('paid_amount')
         pay_method = request.POST.get('pay_method')
-        name = request.POST.get("name")
 
         token_access_data = {
             'imp_key': settings.IAMPORT_KEY,
@@ -449,8 +446,6 @@ class RefundCartPartialView(LoggedInOnlyView, View):
     def get(self, request, *args, **kwargs):
         item_merchant_uid = kwargs.get("merchant_uid")
         payment = models.Payment.objects.get(merchant_uid=item_merchant_uid)
-        #direct_pay = models.Payment.objects.get(merchant_uid = item_merchant_uid).imp_uid
-        # print(direct_pay)
         return render(request, "payment/partial_refund.html", {"payment": payment})
 
     def post(self, request, *args, **kwargs):
