@@ -13,6 +13,7 @@ psycopg2 = "*"
 django-storages = "*"
 boto3 = "*"
 django-staticfiles = "*"
+validate-email = "*"
 
 [dev-packages]
 
