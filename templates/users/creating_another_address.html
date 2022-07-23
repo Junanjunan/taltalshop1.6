@@ -1,0 +1,65 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+    <form action="{% url 'users:creating-another-address' %}" method="POST">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>이름</td>
+                {% if receiver %}
+                <td><input type="text" name="receiver" class="receiver" value="{{receiver}}"></td>
+                {% else %}
+                <td><input type="text" name="receiver" class="receiver"></td>  
+                {% endif %}
+                
+            </tr>
+            <tr>
+                <td>배송주소</td>
+                <td>
+                    {% if address %}
+                    <input type="text" name="address" class="address" placeholder="주소검색" readonly value="{{address}}">
+                    {% else %}
+                    <input type="text" name="address" class="address" placeholder="주소검색" readonly>  
+                    {% endif %}
+                    
+                    {% if addressDetail %}
+                    <input type="text" name="address_detail" class="address_detail" placeholder="상세주소" value="{{addressDetail}}">
+                    {% else %}
+                    <input type="text" name="address_detail" class="address_detail" placeholder="상세주소">  
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>연락처</td>
+                {% if phoneNumber %}
+                <td><input type="text" name="phone_number" class="phone_number" value="{{phoneNumber}}"></td>
+                {% else %}  
+                <td><input type="text" name="phone_number" class="phone_number"></td>
+                {% endif %}
+                
+            </tr>
+            <tr>
+                <td>배송 요청사항</td>
+                {% if deliveryRequirement %}
+                <td><input type="text" name="delivery_requirement" class="delivery_requirement" value="{{deliveryRequirement}}"></td>
+                {% else %}
+                <td><input type="text" name="delivery_requirement" class="delivery_requirement"></td>  
+                {% endif %}
+                
+            </tr>
+        </table>
+        <button>새주소 등록</button>
+    </form>
+
+    <script>
+        const receiver = document.querySelector(".receiver");
+        const address = document.querySelector(".address");
+        const addressDetail = document.querySelector(".address_detail");
+        const phoneNumber = document.querySelector(".phone_number");
+        const deliveryRequirement = document.querySelector(".delivery_requirement");
+
+        address.addEventListener("click", function(){
+            location.href =`/users/change-address-payment-creating/?receiver=${receiver.value}&addressDetail=${addressDetail.value}&phoneNumber=${phoneNumber.value}&deliveryRequirement=${deliveryRequirement.value}`;
+        })
+    </script>
+{% endblock content %}

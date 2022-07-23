@@ -1,0 +1,28 @@
+{% load static %}
+<head>
+<link rel="stylesheet" href="{% static 'styles.css' %}">
+<script src="https://kit.fontawesome.com/5b90cf84ef.js" crossorigin="anonymous"></script>
+</head>
+
+<div class="flex-column-center login-page">
+  <a href="{% url 'home:home' %}"><img src="{% static 'logo/taltal_logo.png' %}" alt="taltal_logo"></a>
+  <form method="POST" action="{% url 'users:signup' %}">
+      {% csrf_token %}
+      <div>{{form.as_p}}</div>
+      <button class="login-button">가입하기(Sign Up)</button>
+  </form>
+  
+  {% if form.errors %}
+  
+
+  {% endif %}
+    
+
+  <!-- <div class="signup-description">※ 작성하신 이메일 주소로 발송된 메일의 <br>링크를 클릭해야 회원가입이 완료됩니다.</div> -->
+  <div class="password-signup"><a href="{% url 'users:request-password' %}">비밀번호 찾기</a><span>|</span><a href="{% url 'users:login' %}">로그인</a></div>
+  {% include 'users/social_login.html' %}
+  <hr>
+</div>
+
+
+

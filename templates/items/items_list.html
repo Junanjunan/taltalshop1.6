@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block content %}
+<div class="list-body">
+    <div class="category-belt"></div>
+    <div class="flex">
+        <div class="item-list">
+            <div class="filter2-bind">
+                <a href="{% url 'items:low-price' %}?name={{name__contains}}&category={{item_category__contains}}&page={{items.number}}" class="filter2 {% if 'low-price' in request.path %}active{% endif %}">낮은가격순</a>
+                <a href="{% url 'items:high-price' %}?name={{name__contains}}&category={{item_category__contains}}&page={{items.number}}" class="filter2 {% if 'high-price' in request.path %}active{% endif %}">높은가격순</a>
+                <a href="{% url 'items:pay-count' %}?name={{name__contains}}&category={{item_category__contains}}&page={{items.number}}" class="filter2 {% if 'pay-count' in request.path %}active{% endif %}">판매량순</a>
+                <a href="{% url 'items:created' %}?name={{name__contains}}&category={{item_category__contains}}&page={{items.number}}" class="filter2 {% if 'created' in request.path %}active{% endif %}">최신순</a>
+            </div>
+            <div class="flex wrap">
+            {% for item in items %}
+                {% include "items/partials/list_partial.html" %}
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="width100 flex-center">
+        {% include "mixins/pagination.html" with items=items %}
+    </div>
+</div>
+{% include "items/partials/lately_items.html" %}
+{% endblock content %}

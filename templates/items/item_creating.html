@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="second-body">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-in-div">
+            <hr>
+            <div class="flex">
+                <div class="creating-left">상품종류</div>
+                <div>{{form.item_category}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">상품명</div>
+                <div>{{form.name}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">가격</div>
+                <div>{{form.price}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">배송비</div>
+                <div>{{form.deli_fee}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">로켓배송</div>
+                <div>{{form.rocket}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">용량(중량) / 크기</div>
+                <div>{{form.volume}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">제품 주요 사양</div>
+                <div>{{form.specification}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">사용기한 또는 개봉후 사용기간</div>
+                <div>{{form.use_period}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">사용방법</div>
+                <div>{{form.how_to_use}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">화장품제조업자 및 화장품책임판매업자</div>
+                <div>{{form.producer}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">제조국</div>
+                <div>{{form.coo}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">화장품법에 따라 기재, 표시하여야 하는 모든 성분</div>
+                <div>{{form.cosmetic_component}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">식품의약품안전처 심사필 유무 (기능성 화장품)</div>
+                <div>{{form.certification}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">사용할 때 주의사항</div>
+                <div>{{form.precaution}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">품질보증기준</div>
+                <div>{{form.quality_guarantee}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">품명 및 모델명</div>
+                <div>{{form.item_model_name}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">정격전압, 소비전력</div>
+                <div>{{form.about_electric}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">출시년월</div>
+                <div>{{form.release_date}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">소비자상담관련 전화번호</div>
+                <div>{{form.inquiry_number}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">유튜브url</div>
+                <div>{{form.youtube_url}}</div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">상품이미지</div>         
+                <input type="file" name="file_field[]" accept="image/*" class="choose-file" multiple required>
+            </div>
+            <div class="flex">
+                <div class="creating-left"></div>
+                <div class="flex wrap img-preview"></div>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left">상세페이지</div>         
+                <input type="file" name="detail_pages" accept="image/*" class="choose-page" multiple required>
+            </div>
+            <hr>
+            <div class="flex">
+                <div class="creating-left"></div>
+                <div class="flex wrap page-preview"></div>
+            </div>
+        </div>
+        <div class="flex-center"><button class="white-btn">상품등록</button></div>
+    </form>
+</div>
+
+
+<script>
+    const chooseFile = document.querySelector(".choose-file");
+    const imgPreview = document.querySelector(".img-preview");
+    const dt = new DataTransfer();
+
+    chooseFile.addEventListener("change", getImgData);
+    
+    function getImgData(){
+        var tag = "";
+        var files = chooseFile.files;
+        for (let file of files){
+            const now = new Date();
+            file.id = file.name + now.getTime();
+            dt.items.add(file);
+        }
+        files = dt.files;
+        
+        var filesForPreview = chooseFile.files;
+        for (let i=0; i < filesForPreview.length; i++){
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(filesForPreview[i]);
+            fileReader.addEventListener("load", function(){
+                tag = `<div class="imgBound">
+                        <img src="${this.result}" class="item-photo" name="${filesForPreview[i].name}" alt="${filesForPreview[i].name}"/>
+                        <div class="photo-delete mlmrauto imgDelBtn" id="${filesForPreview[i].id}" name="${filesForPreview[i].name}" alt="${filesForPreview[i].name}" onclick="delImg(event)">
+                            삭제
+                        </div>
+                    </div>`;
+                imgPreview.insertAdjacentHTML('beforeend', tag);
+            });
+        }
+        chooseFile.files = files;
+    };
+    
+    function delImg(e){
+        const imgDelBtn = document.querySelector(".imgDelBtn");
+        var files = chooseFile.files;
+        for(let i=0; i < dt.files.length; i++){
+            if(dt.files[i].id===e.target.attributes.id.value){
+                dt.items.remove(i);
+            }
+        }
+        files = dt.files;
+        chooseFile.files = files;
+        e.target.parentNode.style.display = "none";
+    }
+
+    ///////////////////////////////////////////
+    const choosePage = document.querySelector(".choose-page");
+    const pagePreview = document.querySelector(".page-preview");
+    const pt = new DataTransfer();
+
+    choosePage.addEventListener("change", getPageData);
+    
+    function getPageData(){
+        var tag = "";
+        var pages = choosePage.files;
+        for (let page of pages){
+            const now = new Date();
+            page.id = page.name + now.getTime();
+            pt.items.add(page);
+        }
+        pages = pt.files;
+        
+        var pagesForPreview = choosePage.files;
+        for (let i=0; i < pagesForPreview.length; i++){
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(pagesForPreview[i]);
+            fileReader.addEventListener("load", function(){
+                tag = `<div class="imgBound">
+                        <img src="${this.result}" class="item-photo" name="${pagesForPreview[i].name}" alt="${pagesForPreview[i].name}"/>
+                        <div class="photo-delete mlmrauto pageDelBtn" id="${pagesForPreview[i].id}" name="${pagesForPreview[i].name}" alt="${pagesForPreview[i].name}" onclick="delPage(event)">
+                            삭제
+                        </div>
+                    </div>`;
+                pagePreview.insertAdjacentHTML('beforeend', tag);
+            });
+        }
+        choosePage.files = pages;
+    }
+    
+    function delPage(e){
+        const pageDelBtn = document.querySelector(".pageDelBtn");
+        var pages = choosePage.files;
+        for(let i=0; i < pt.files.length; i++){
+            if(pt.files[i].id===e.target.attributes.id.value){
+                pt.items.remove(i);
+            }
+        }
+        pages = pt.files;
+        choosePage.files = pages;
+        e.target.parentNode.style.display = "none";
+    }
+</script>
+{% endblock content %}

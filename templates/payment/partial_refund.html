@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="list-body">
+    <div><span>주문번호: </span><span>{{payment.merchant_uid}}</span></div>
+    <div><span>결제번호: </span><span>{{payment.imp_uid}}</span></div>
+    <div><span>주문자: </span><span>{{payment.user}}</span></div>
+    <div><span>상품명: </span><span>{{payment.item}}</span></div>
+    <div><span>상품가격: </span><span>{{payment.price}}</span></div>
+    <div><span>상품갯수: </span><span>{{payment.item_count}}</span></div>
+    <div><span>택배비: </span><span>{{payment.deli_fee}}</span></div>
+    <div><span>결제금액: </span><span>{{payment.paid_amount}}</span></div>
+    <div><span>결제수단: </span><span>{{payment.pay_method}}</span></div>
+    <div><span>결제상태: </span><span>{{payment.status}}</span></div>
+    <div><span>결제시간: </span><span>{{payment.created}}</span></div>
+    <div><span>장바구니 결제번호:</span><span>{{payment.bucket_paid}}</span></div>
+    <button class="refundButton">환불요청</button>
+</div>
+
+    <script>
+        const refundButton = document.querySelector(".refundButton")
+        refundButton.addEventListener("click", cancelPay); 
+        function cancelPay(){
+            $.ajax({
+            "url": "{% url 'payments:partial-refund' payment.merchant_uid %}",
+            "method": "POST",
+            "data": {
+                "merchant_uid": "{{merchant_uid}}",
+                "cancel_request_amount": "{{payment.paid_amount}}",
+                "reason": "테스트 환불",
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            }
+            }).done(function(){
+                alert("성공");
+            }).fail(function(){
+                alert("환불 권한이 없는 유저이거나 이미 환불된 상품입니다.");
+            })
+        }
+    </script>
+{% endblock content %}

@@ -1,0 +1,160 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<div class="second-body">
+    <div><a href="{% url 'home:home' %}"><img src="{% static 'logo/taltal_logo.png' %}" alt="taltal_logo" width="150px"></a></div>
+    <hr>
+    <div class="page-title">주문/결제</div>
+    <div>
+        <h3>구매자 정보</h3>
+        <table>
+            <colgroup>
+                <col span="1" class="col-title">
+                <col span="1" class="col-des">
+            </colgroup>
+            <tr class="tr-top">
+                <td>이름</td>
+                <td>{{request.user}}</td>
+            </tr>
+            <tr>
+                <td>이메일</td>
+                <td>{{request.user.email}}</td>
+            </tr>
+            <tr>
+                <td>휴대폰 번호</td>
+                <td>010-8635-7811</td>
+            </tr>
+        </table>
+    </div>
+    <br>
+        <div>
+            <h3>받는사람 정보</h3>
+            <table>
+                <colgroup>
+                    <col span="1" class="col-title">
+                    <col span="1" class="col-des">
+                </colgroup>
+                <tr class="tr-top">
+                    <td>이름</td>
+                    <td>{{request.user}}</td>
+                </tr>
+                <tr>
+                    <td>배송주소</td>
+                    <td>서울특별시 광진구 구의동 251-53</td>
+                </tr>
+                <tr>
+                    <td>연락처</td>
+                    <td>010-8635-7811</td>
+                </tr>
+                <tr>
+                    <td>배송 요청사항</td>
+                    <td>빠르게</td>
+                </tr>
+            </table>
+        </div>
+        <div class="basic-box"><input type="checkbox"><span>주말 및 공휴일 수령 가능</span></div>
+        <br>
+        <div>
+            <h3>배송 1건 중 1</h3>
+            <table>
+                <tr><td>내일(일) ~~ 도착 보장</td></tr>
+                {% for order in bucket %}
+                <tr><td>{{order.item}}, {{order.item_count}}개</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div>
+            <h3>결제정보</h3>
+            <table>
+                <colgroup>
+                    <col span="1" class="col-title">
+                    <col span="1" class="col-des">
+                </colgroup>
+                <tr class="tr-top">
+                    <td>총상품가격</td>
+                    <td>{{item_amount|intcomma}}원</td>
+                </tr>
+                <tr>
+                    <td>배송비</td>
+                    <td>{{deli_fee_amount|intcomma}}원</td>
+                </tr>
+                <tr>
+                    <td>총결제금액</td>
+                    <td>{{total_amount|intcomma}}원</td>
+                </tr>
+                <tr>
+                    <td>결제방법</td>
+                    <td>
+                        <div class="pay-method">
+                            <span><input type="radio" name="pay_method" value="trans">계좌이체</span>
+                            <span><input type="radio" name="pay_method" value="card">신용/체크카드</span>
+                            <span><input type="radio" name="pay_method" value="phone" checked="checked">휴대폰</span>
+                            <span><input type="radio" name="pay_method" value="vbank">무통장입금(가상계좌)</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    <hr>
+    <div class="width100 flex-center">
+        <a href="{% url 'home:home' %}"><button class="white-btn">계속 쇼핑하기</button></a>
+        <button class="pay-button">결제하기</button>
+    </div>
+</div>
+
+<script>
+    const pay_button = document.querySelector(".pay-button");
+    var IMP = window.IMP;
+    var merchant_uid = "{{merchant_uid}}"
+    IMP.init("imp34020289");
+
+    pay_button.addEventListener("click", requestPay);
+    function requestPay(){
+        var pay_method = $(".pay-method input:checked").val();
+        IMP.request_pay({
+            pg: "html5_inicis",
+            pay_method: pay_method,
+            merchant_uid: merchant_uid,
+            name: "{{first_item}} 등 {{bucket|length}}개 상품",
+            amount: "{{total_amount}}"
+        }, function(rsp){
+            if(rsp.success){
+                $.ajax({
+                    method: "POST",
+                    url: "{% url 'payments:cart-save' %}",
+                    data: {
+                        imp_uid: rsp.imp_uid,
+                        merchant_uid: rsp.merchant_uid,
+                        name: rsp.name,
+                        paid_amount: rsp.paid_amount,
+                        pay_method: rsp.pay_method,
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                    }
+                }).done(function(data){
+                    alert("결제 성공");
+                    window.location.href= "{% url 'payments:cart-done' merchant_uid %}"
+                });
+            } else{
+                alert("결제 실패")
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

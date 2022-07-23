@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="list-body">
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="page-title">상품 품질 리뷰</div>
+        <hr>
+        <div class="flex">
+            <div class="review-left">
+                <img src="{{review.item.first_photo}}" alt="{{review.item}}" width="100px" height="100px">
+            </div>
+            <div>
+                <div>
+                    <span>상품명: </span><span>{{review.item}}</span>
+                </div>
+                <div class="none">
+                    기존 평점: <span class="review-rating">{{review.rating}}</span>
+                </div>
+                <div class="rating">
+                    <span>
+                        <input class="rating-radio" type="radio" name="rating" value="two" id="two"><label for="two"><i class="fas fa-star star1"></i></label>
+                        <input class="rating-radio" type="radio" name="rating" value="four" id="four"><label for="four"><i class="fas fa-star star2"></i></label>
+                        <input class="rating-radio" type="radio" name="rating" value="six" id="six"><label for="six"><i class="fas fa-star star3"></i></label>
+                        <input class="rating-radio" type="radio" name="rating" value="eight" id="eight"><label for="eight"><i class="fas fa-star star4"></i></label>
+                        <input class="rating-radio" type="radio" name="rating" value="ten" id="ten"><label for="ten"><i class="fas fa-star star5"></i></label>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="flex">
+            <div class="review-left">상세리뷰</div>
+            <textarea name="content" class="review-textarea" placeholder="상품 품질에 대한 고객님의 솔직한 리뷰를 남겨주세요.">{{review.content}}</textarea>
+        </div>
+        <hr>
+        <div class="flex">
+            <div class="review-left">사진첨부</div>
+            <input type="file" name="file" class="choose-file" accept="image/*" multiple><span class="photoCount">{{review.photos.all|length}}</span><span>/10</span>
+            <span class="exPhotoCount none">{{review.photos.all|length}}</span>
+        </div>
+        <div class="flex">
+            <div class="review-left"></div>
+            <div class="flex">
+                {% for i in review.photos.all %}
+                    <div class="imgBound existedPhotoDiv">
+                        <img src="{{i.photo.url}}" class="item-photo existedPhoto" alt="{{i.name}}" name="{{i.pk}}" />
+                        <div></div>
+                        <div class="photo-delete mlmrauto imgDelBtn existedPhotoDelBtn" name="{{i.pk}}" id="{{i.pk}}" onclick="delImg(event)">
+                            삭제
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="flex">
+            <div class="review-left"></div>
+            <div class="flex wrap img-preview"></div>
+        </div>
+        <hr>
+        <div class="flex-center">
+            <button class="white-btn">수정하기</button>
+        </div>
+    </form>
+</div>
+<script>
+    const whiteBtn = document.querySelector(".white-btn");
+    whiteBtn.addEventListener("click", function(e){
+        var getSelectedValue = document.querySelector('input[name="rating"]:checked');
+        if(getSelectedValue==null){
+            alert("평점 체크!");
+            e.preventDefault();
+        }
+    })
+
+
+    const chooseFile = document.querySelector(".choose-file");
+    const imgPreview = document.querySelector(".img-preview");
+    const photoCount = document.querySelector(".photoCount");
+    const exPhotoCount = document.querySelector(".exPhotoCount");
+    const dt = new DataTransfer();
+
+    chooseFile.addEventListener("change", getImgData);
+    
+    function getImgData(e){
+        var tag = "";
+        var files = chooseFile.files;
+        for (let file of files){
+            if(dt.files.length < 10){
+                dt.items.add(file);
+            } else{
+                alert("리뷰사진은 10개 이하로 올려주세요.");
+                break;
+            }
+        }
+        files = dt.files;
+
+        var photoCountLength = files.length + parseInt(exPhotoCount.innerHTML);
+
+        photoCount.innerHTML = `${photoCountLength}`;
+
+        var filesForPreview = chooseFile.files;
+        for (let i=0; i < filesForPreview.length; i++){
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(filesForPreview[i]);
+            fileReader.addEventListener("load", function(){
+                tag = `<div class="imgBound">
+                        <img src="${this.result}" class="item-photo" name="${filesForPreview[i].name}" alt="${filesForPreview[i].name}"/>
+                        <div class="photo-delete mlmrauto imgDelBtn" id="${filesForPreview[i].id}" name="${filesForPreview[i].name}" alt="${filesForPreview[i].name}" onclick="delImg(event)">
+                            삭제
+                        </div>
+                    </div>`;
+                imgPreview.insertAdjacentHTML('beforeend', tag);
+            });
+        }
+        chooseFile.files = files;
+    }; 
+
+    function delImg(e){
+        const imgDelBtn = document.querySelector(".imgDelBtn");
+        var files = chooseFile.files;
+        for(let i=0; i < dt.items.length; i++){
+            if(dt.items[i].getAsFile().name===e.target.attributes.name.value){
+                dt.items.remove(i);
+            }
+        }
+        files = dt.files;
+        chooseFile.files = files;
+        e.target.parentNode.style.display = "none";
+        console.log(files.length);
+        var photoCountLength = files.length + parseInt(exPhotoCount.innerHTML);
+        console.log(photoCountLength);
+        photoCount.innerHTML = `${photoCountLength}`;
+    }
+
+    const star1 = document.querySelector(".star1");
+    const star2 = document.querySelector(".star2");
+    const star3 = document.querySelector(".star3");
+    const star4 = document.querySelector(".star4");
+    const star5 = document.querySelector(".star5");
+    
+    var radio2 = document.querySelector("#two");
+    var radio4 = document.querySelector("#four");
+    var radio6 = document.querySelector("#six");
+    var radio8 = document.querySelector("#eight");
+    var radio10 = document.querySelector("#ten");
+
+    
+
+    star1.addEventListener("click", function(){
+        star1.classList.add("gold-star");
+        star2.classList.remove("gold-star");
+        star3.classList.remove("gold-star");
+        star4.classList.remove("gold-star");
+        star5.classList.remove("gold-star");
+    })
+
+    star2.addEventListener("click", function(){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.remove("gold-star");
+        star4.classList.remove("gold-star");
+        star5.classList.remove("gold-star");
+    })
+
+    star3.addEventListener("click", function(){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.add("gold-star");
+        star4.classList.remove("gold-star");
+        star5.classList.remove("gold-star");
+    })
+
+    star4.addEventListener("click", function(){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.add("gold-star");
+        star4.classList.add("gold-star");
+        star5.classList.remove("gold-star");
+    })
+
+    star5.addEventListener("click", function(){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.add("gold-star");
+        star4.classList.add("gold-star");
+        star5.classList.add("gold-star");
+    })
+
+    const reviewRating = document.querySelector(".review-rating").innerText;
+    if(reviewRating === "2"){
+        star1.classList.add("gold-star");
+        star2.classList.remove("gold-star");
+        star3.classList.remove("gold-star");
+        star4.classList.remove("gold-star");
+        star5.classList.remove("gold-star");
+        radio2.checked = true;
+    } else if(reviewRating === "4"){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.remove("gold-star");
+        star4.classList.remove("gold-star");
+        star5.classList.remove("gold-star");
+        radio4.checked = true;
+    } else if(reviewRating === "6"){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.add("gold-star");
+        star4.classList.remove("gold-star");
+        star5.classList.remove("gold-star");
+        radio6.checked = true;
+    } else if(reviewRating === "8"){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.add("gold-star");
+        star4.classList.add("gold-star");
+        star5.classList.remove("gold-star");
+        radio8.checked = true;
+    } else if(reviewRating === "10"){
+        star1.classList.add("gold-star");
+        star2.classList.add("gold-star");
+        star3.classList.add("gold-star");
+        star4.classList.add("gold-star");
+        star5.classList.add("gold-star");
+        radio10.checked = true;
+    }
+
+    const existedPhotoDelBtn = document.querySelectorAll(".existedPhotoDelBtn");
+    const existedPhotoDiv = document.querySelectorAll(".existedPhotoDiv");
+
+    for (let i=0; i < existedPhotoDelBtn.length; i++){
+        existedPhotoDelBtn[i].addEventListener("click", function(){
+            $.ajax({
+            method:"GET",
+            url: `/items/photo-delete/${existedPhotoDelBtn[i].id}/`
+            }).done(function(){
+                existedPhotoDiv[i].style.display="none";
+
+                var files = chooseFile.files;
+                files = dt.files;
+                var photoCountLength = files.length + parseInt(exPhotoCount.innerHTML);
+                photoCount.innerHTML = `${photoCountLength}`;
+            })
+        })
+    }
+</script>
+{% endblock content %}

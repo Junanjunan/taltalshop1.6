@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="list-body">
+    <div class="page-title">문의목록</div>
+    {% if request.user.inquiries.all %}
+    <table class="width100 inquiry-table">
+        <thead>
+            <tr>
+                <th>상품사진</th>
+                <th>상품명</th>
+                <th>작성일</th>
+                <th>문의내용</th>
+                <th>답변</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in request.user.inquiries.all %}
+            <tr>
+                <td><a href="{% url 'items:item-detail' i.item.pk %}"><img src="{{i.item.first_photo}}" alt="{{i.item.name}}" width="100px" height="100px"></a></td>
+                <td><a href="{% url 'items:item-detail' i.item.pk %}">{{i.item}}</a></td>
+                <td>{{i.created|date:"Y.m.d"}} {{i.created|time:"H:i:s"}}</td>
+                <td>{{i.inquiry}}</td>
+                <td>
+                {% if i.comment %}{{i.comment}}{% else %}<span>아직 답변이 달리지 않았습니다.</span>{% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="center">등록된 상품 문의가 없습니다.</div>
+    {% endif %}
+        
+    
+</div>
+{% endblock content %}

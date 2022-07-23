@@ -1,0 +1,44 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+<div class="center">배송지 선택</div>
+<hr>
+    {% for i in address_list %}
+    <div>
+        <div class="a_user">{{i.receiver}}</div>
+        <div class="a_address">{{i.address}}, {{i.address_detail}}</div>
+        <div class="a_phone_number">{{i.phone_number}}</div>
+        <div class="a_delivery_requirement">{{i.delivery_requirement}}</div>
+    </div>
+    <div class="flex space-between">
+        <a href="{% url 'users:updating-another-address' i.pk %}"><button class="modify-address-btn">수정</button></a>
+        <button class="select-address-btn">선택</button>
+    </div>
+    <hr>
+    {% endfor %}
+    <br>
+<div class="center"><a href="{% url 'users:creating-another-address' %}"><button class="white-btn">배송지 추가</button></a></div>
+<script>
+    const aUsers = document.querySelectorAll(".a_user");
+    const aAddresses = document.querySelectorAll(".a_address");
+    const aPhoneNumbers = document.querySelectorAll(".a_phone_number");
+    const aDeliveryRequirement = document.querySelectorAll(".a_delivery_requirement");
+    const modifyAddressBtn = document.querySelectorAll(".modify-address-btn");
+    const selectAddressBtn = document.querySelectorAll(".select-address-btn");
+
+    const deliUser = window.opener.document.querySelector(".deli-user");
+    const deliAddress = window.opener.document.querySelector(".deli-address");
+    const deliPhoneNumber = window.opener.document.querySelector(".deli-phone-number");
+    const deli_require = window.opener.document.querySelector(".deli-require");
+
+    for(let i=0; i < selectAddressBtn.length; i++){
+        selectAddressBtn[i].addEventListener("click", function(){
+            deliUser.innerHTML = aUsers[i].innerHTML;
+            deliAddress.innerHTML = aAddresses[i].innerHTML;
+            deliPhoneNumber.innerHTML = aPhoneNumbers[i].innerHTML;
+            deli_require.innerHTML = aDeliveryRequirement[i].innerHTML;
+            window.close();
+        })
+    }
+</script>
+{% endblock content %}

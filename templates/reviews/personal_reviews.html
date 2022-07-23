@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<div class="list-body">
+    <div class="page-title">리뷰목록</div>
+    {% if review_list %}
+    
+    {% for review in review_list %}
+    <div class="review-container">
+    {% if review.user == request.user %}
+    
+        <div class="flex personal-review-left-div">
+            <div class="personal-review-left">상품</div>
+            <div class="personal-review-item-photo">
+                <a href="{% url 'items:item-detail' review.item.pk %}"><img src="{{review.item.first_photo}}" alt="{{review.item.name}}" width="150px" height="150px"></a>
+            </div>
+            <div>
+                <div>
+                    <div>{{review.item.name}}</div>
+                    <div>{{review.item.price|intcomma}}원</div>
+                    <div>
+                        <span>
+                            {% if review.rating == 2 %}
+                            <i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i>
+                            {% elif review.rating == 4 %}
+                            <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i>
+                            {% elif review.rating == 6 %}
+                            <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i>
+                            {% elif review.rating == 8 %}
+                            <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i>
+                            {% elif review.rating == 10 %}
+                            <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i>
+                            {% endif %}
+                        </span>
+                        <span class="review-date">{{review.created|date:"Y-m-d"}}</span>
+                    </div>
+                </div>
+                
+                <div id="review_{{review.pk}}" class="reviewPopPhoto none2">
+                    <div class="modal-overlay2"></div>
+                    <div class="modal-in2">
+                        <div class="exit2">X</div>
+                        <div class="popPhotoDiv"></div>
+                        <div class="popSmallPhotoDiv">
+                            {% for p in review.photos.all %}
+                            <img class="popSmallPhoto" src="{{p.photo.url}}" alt="{{p.name}}" width="50px" height="50px">
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="color-hr">
+        <div class="reviewPhotoDiv flex personal-review-left-div">
+            <div class="personal-review-left">리뷰사진</div>
+            <div>
+                {% if review.photos.all %}
+                {% for p in review.photos.all %}
+                <img id="review_{{review.pk}}" class="reviewPhoto pointer" src="{{p.photo.url}}" alt="{{p.name}}" width="60px" height="60px">
+                {% endfor %}
+                {% else %}
+                <span>리뷰 사진을 올리지 않았습니다.</span>
+                {% endif %}
+            </div>
+        </div>
+        <hr class="color-hr">
+        <div class="flex personal-review-left-div">
+            <div class="personal-review-left">리뷰내용</div>
+            <div class="review-content">{{review.content}}</div>
+        </div>
+        <div class="center"><a href="{% url 'reviews:updating-review' review.payment.merchant_uid %}" class="modify-review-btn">리뷰 수정하기</a></div>
+    {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="flex-center">등록된 상품평이 없습니다.</div>
+    {% endif %}
+
+</div>
+<script>
+    const small_photo = document.querySelectorAll(".small-photo");
+    const photo_box = document.querySelector(".photo-box");
+
+    for(let i=0; i < small_photo.length; i++){
+        small_photo[i].addEventListener("mouseover", function(){
+            $.ajax({
+            }).done(function(){
+                photo_box.innerHTML = `<img class="absolute" src=${small_photo[i].src} alt="photo-box" width="450px" height="450px">`;
+            })
+        })
+    }
+
+    const reviewPhoto = document.querySelectorAll(".reviewPhoto");
+    const reviewPopPhoto = document.querySelectorAll(".reviewPopPhoto");
+    const popPhotoDiv = document.querySelectorAll(".popPhotoDiv");
+    const popSmallPhotoDiv = document.querySelectorAll(".popSmallPhotoDiv");
+    for(let i=0; i<reviewPhoto.length; i++){
+        reviewPhoto[i].addEventListener("click", function(){
+            for(let j=0; j<reviewPopPhoto.length; j++){
+                if(reviewPhoto[i].id === reviewPopPhoto[j].id){
+                    reviewPopPhoto[j].classList.remove("none2");
+                    reviewPopPhoto[j].classList.add("modal-after2");
+                    popPhotoDiv[j].innerHTML = `<img src=${reviewPhoto[i].src} alt="small" width="900px" height="700px">`;
+                }
+            };
+        })
+    }
+
+    const popSmallPhoto = document.querySelectorAll(".popSmallPhoto");
+    for(let i=0; i<popSmallPhoto.length; i++){       
+        popSmallPhoto[i].addEventListener("mouseover", function(){
+            $.ajax({
+            }).done(function(){
+                for(let j=0; j<popPhotoDiv.length; j++){
+                    popPhotoDiv[j].innerHTML = `<img src=${popSmallPhoto[i].src} alt="small" width="900px" height="700px">`;
+                }
+            })
+        })
+    }
+    
+    const modal_overlay2 = document.querySelectorAll(".modal-overlay2");
+    for(let j=0; j<modal_overlay2.length; j++){
+        modal_overlay2[j].addEventListener("click", function(){
+            for(let i=0; i<reviewPopPhoto.length; i++){
+                reviewPopPhoto[i].classList.remove("modal-after2");
+                reviewPopPhoto[i].classList.add("none2");
+            }
+        })
+    }
+
+    const exit2 = document.querySelectorAll(".exit2");
+    for(let j=0; j<exit2.length; j++){
+        exit2[j].addEventListener("click", function(){
+            for(let i=0; i<reviewPopPhoto.length; i++){
+                reviewPopPhoto[i].classList.remove("modal-after2");
+                reviewPopPhoto[i].classList.add("none2");
+            }
+        })
+    }
+</script>
+{% endblock content %}

@@ -1,0 +1,63 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+    <form action="{% url 'users:updating-another-address' another_address.pk %}" method="POST">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>이름</td>
+                {% if receiver %}
+                <td><input type="text" name="receiver" class="receiver" value="{{receiver}}"></td>
+                {% else %}
+                <td><input type="text" name="receiver" class="receiver" value="{{another_address.receiver}}"></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>배송주소</td>
+                <td>
+                    {% if address %}
+                    <input type="text" name="address" class="address" placeholder="주소검색" readonly value="{{address}}">
+                    {% else %}
+                    <input type="text" name="address" class="address" placeholder="주소검색" readonly value="{{another_address.address}}">
+                    {% endif %}
+                    
+                    {% if addressDetail %}
+                    <input type="text" name="address_detail" class="address_detail" placeholder="상세주소" value="{{addressDetail}}">
+                    {% else %}
+                    <input type="text" name="address_detail" class="address_detail" placeholder="상세주소" value="{{another_address.address_detail}}">
+                    {% endif %}
+                    
+                </td>
+            </tr>
+            <tr>
+                <td>연락처</td>
+                {% if phoneNumber %}
+                <td><input type="text" name="phone_number" class="phone_number" value="{{phoneNumber}}"></td>
+                {% else %}
+                <td><input type="text" name="phone_number" class="phone_number" value="{{another_address.phone_number}}"></td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td>배송 요청사항</td>
+                {% if deliveryRequirement %}
+                <td><input type="text" name="delivery_requirement" class="delivery_requirement" value="{{deliveryRequirement}}"></td>
+                {% else %}
+                <td><input type="text" name="delivery_requirement" class="delivery_requirement" value="{{another_address.delivery_requirement}}"></td>
+                {% endif %}
+            </tr>
+        </table>
+        <button>수정</button>
+    </form>
+        <a href="{% url 'users:delete-another-address-payment' another_address.pk %}"><button>삭제</button></a>
+    <script>
+        const receiver = document.querySelector(".receiver");
+        const address = document.querySelector(".address");
+        const addressDetail = document.querySelector(".address_detail");
+        const phoneNumber = document.querySelector(".phone_number");
+        const deliveryRequirement = document.querySelector(".delivery_requirement");
+
+        address.addEventListener("click", function(){
+            location.href =`/users/change-address-payment-updating/?receiver=${receiver.value}&addressDetail=${addressDetail.value}&phoneNumber=${phoneNumber.value}&deliveryRequirement=${deliveryRequirement.value}`;
+        })
+    </script>
+{% endblock content %}

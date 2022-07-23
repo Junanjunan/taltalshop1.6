@@ -46,6 +46,8 @@ Django_APPS = [
 PROJECT_APPS = [
     "users.apps.UsersConfig",
     "items.apps.ItemsConfig",
+    "payments.apps.PaymentsConfig",
+    "reviews.apps.ReviewsConfig",
 ]
 
 THIRD_PARTY_APPS = [

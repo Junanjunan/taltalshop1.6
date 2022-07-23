@@ -1,0 +1,123 @@
+{% load static %}
+{% load humanize %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://kit.fontawesome.com/5b90cf84ef.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+    <title>{% block pagetitle %}{% endblock pagetitle %}</title>
+</head>
+<body>
+<div class="second-body">
+    <a href="{% url 'home:home' %}" class="login_nav_a"><img src="{% static 'logo/taltal_logo.png' %}" alt="taltal_logo" width="150px"></a>
+    <div class="bucket-body">
+        <div class="page-title"><i class="fas fa-shopping-cart"></i>장바구니</div>
+        <table class="width100 bucket-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="whole-checkbox">전체선택</th>
+                    <th>상품정보</th>
+                    <th>상품 갯수</th>
+                    <th>개당 상품금액</th>
+                    <th>전체 상품금액</th>
+                    <th>배송비</th>
+                    <th>삭제</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in user.totalbuckets.all %}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="bucket-img-checkbox" id="{{i.pk}}">
+                        <a href="{% url 'items:item-detail' i.item.pk %}"><img src="{{i.item.first_photo}}" alt="{{i.name}}" width="100px" height="100px"></a>
+                    </td>
+                    <td>{{i.item.name}}</td>
+                    <td><input class="order-quan" id="{{i.item.pk}}" type="number" min=1 value="{{i.item_count}}" onkeydown=onlyInput()></td>
+                    <!-- <td>{{i.item_count}}</td> -->
+                    <td>{{i.price}}</td>
+                    <td class="total_price">{{i.total_price}}</td>
+                    <td class="deli_fee">{{i.item.deli_fee}}</td>
+                    <td><form action="{% url 'users:delete-bucket' user.pk i.pk %}" method="GET"><button>삭제</button></form></td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="item_amount">{{item_amount|intcomma}}원</td>
+                    <td class="deli_fee_amount">{{deli_fee_amount|intcomma}}원</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="selected-del-btn">선택삭제</button>
+        <div class="width100 price-box">
+            <span class="total_amount-title">결제금액</span>
+            <span class="total_amount">{{total_amount|intcomma}}</span><span>원</span>
+        </div>
+        <div class="width100 flex-center">
+            <a href="{% url 'home:home' %}"><button class="white-btn">계속 쇼핑하기</button></a>
+            <a href="{% url 'payments:cart' %}"><button class="buy-btn">결제하기</button></a>
+        </div>
+    </div>
+</div>
+<script>
+    const url = "{% url 'users:change-bucket' user.pk %}";
+    const order_quan = document.querySelectorAll(".order-quan");
+    function onlyInput(e){
+        if(e.keyCode===190 || e.keyCode===110){
+            e.preventDefault();
+        }
+    };
+    for (let i=0; i<order_quan.length; i++){
+        order_quan[i].addEventListener("keydown", onlyInput);
+        order_quan[i].addEventListener("change", function(){
+            $.ajax({
+                method: "POST",
+                url: url,
+                data: {
+                    item_pk: order_quan[i].id,
+                    item_count: order_quan[i].value,
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                }
+            }).done(function(){
+                window.location.reload(true);
+            })
+        })
+    }
+
+    const wholeCheckbox = document.querySelector(".whole-checkbox");
+    const bucketImgCheckbox = document.querySelectorAll(".bucket-img-checkbox");
+
+    wholeCheckbox.addEventListener("click", function(){
+        if(wholeCheckbox.checked){
+            for(let i=0; i<bucketImgCheckbox.length; i++){
+                bucketImgCheckbox[i].checked = true;
+            }
+        } else{
+            for(let i=0; i<bucketImgCheckbox.length; i++){
+                bucketImgCheckbox[i].checked = false;
+            }
+        }
+    })
+
+    const selectedDelBtn = document.querySelector(".selected-del-btn");
+    selectedDelBtn.addEventListener("click", function(){
+        const user_id = "{{request.user.pk}}";
+        for(let i=0; i<bucketImgCheckbox.length; i++){
+            if(bucketImgCheckbox[i].checked){
+                $.ajax({
+                    method: "GET",
+                    url: `/users/customer-bucket/${user_id}/delete/${bucketImgCheckbox[i].id}/`
+                })
+            }
+        }
+        window.location.reload(true);
+    })
+</script>
+<body>

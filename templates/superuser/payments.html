@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="list-body">
+        <table class="width100 superuser-table">
+            <thead>
+                <th>주문번호</th>
+                <th>장바구니<br>주문번호</th>
+                <th>주문자</th>
+                <th>상품</th>
+                <th>상품가격</th>
+                <th>주문갯수</th>
+                <th>배송비</th>
+                <th>결제금액</th>
+                <th>결제상태</th>
+                <th>결제일</th>
+                <th>배송정보</th>
+                <th class="deli-company">택배사</th>
+                <th>송장번호</th>
+            </thead>
+            <tbody>
+                {% for each in items %}
+                
+                    
+                
+                    
+                <tr>
+                    {% if each.bucket_paid %}
+                    <td>{{each.merchant_uid}}</td>
+                    <td><a href="{% url 'payments:cart-done' each.bucket_paid.merchant_uid %}"><button>{{each.bucket_paid.merchant_uid}}</button></a></td>
+                    {% else %}
+                    <td><a href="{% url 'payments:done' each.merchant_uid %}"><button>{{each.merchant_uid}}</button></a></td>
+                    <td>개별상품 결제</td>
+                    {% endif %}
+                    <td>{{each.user}}</td>
+                    <td>{{each.item}}</td>
+                    <td>{{each.price}}</td>
+                    <td>{{each.item_count}}</td>
+                    <td>{{each.deli_fee}}</td>
+                    <td>{{each.paid_amount}}</td>
+                    <td>{{each.status}}</td>
+                    <td>{{each.created|date:"Y-m-d"}}<br>{{each.created|time:"H:i:s"}}</td>
+                    <td>
+                        {% if each.deliveries.all %}
+                        <a href="{% url 'superuser:deliveries' each.merchant_uid %}"><button>수정</button></a>
+                        {% else %}
+                        <a href="{% url 'superuser:deliveries' each.merchant_uid %}"><button>입력</button></a>
+                        {% endif %}   
+                    </td>
+                    <td>
+                        {% for d in each.deliveries.all %}
+                            {{d.deli_code}}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for d in each.deliveries.all %}
+                            {{d.deli_number}}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="width100 flex-center">
+            {% include "mixins/pagination.html" with items=items %}
+        </div>
+    </div>
+
+{% endblock content %}

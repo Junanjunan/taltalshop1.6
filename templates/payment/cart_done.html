@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="list-body">
+    <div class="page-title">주문완료</div>
+    <hr>
+    <div class="width100 flex-center">주문이 완료되었습니다. 현재 결제 대기중입니다.</div>
+    <hr>
+    <div class="page-title">상품배송 정보</div>
+    <div class="flex width100 border-bottom">
+        <div class="width50 border-right">
+            <div>받는사람 정보</div>
+            <div>
+                <div><span class="inline-flex width150">받는사람</span><span>{{request.user}}</span></div>
+                <div><span class="inline-flex width150">받는주소</span><span></span></div>
+                <div><span class="inline-flex width150">배송요청사항</span><span>조심하고 신속하게 부탁해요</span></div>
+            </div>
+        </div>
+        <div class="width50">
+            <div>
+                결제 정보
+            </div>
+            <div>
+                {% for p in bucket_payment.payments.all %}
+                <div class="flex">
+                    <div><img src="{{p.item.first_photo}}" alt="{{p.item}}" width="70px" height="70px"></div>
+                    <div class="width100">
+                        <div class="flex space-between"><span>{{p.item}}</span><span></span></div>
+                        <div class="flex space-between"><span>{{p.item.price}}원 * {{p.item_count}}개</span><span>{% widthratio p.item.price 1 p.item_count %}원</span></div>
+                        <div class="flex space-between"><span>배송비</span><span>{{p.deli_fee}}원</span></div>
+                    </div>
+                </div>
+                <hr>
+                {% endfor %}
+            </div>
+            <div>
+                <div class="flex space-between"><span>총 결제금액</span><span class="item-price">{{bucket_payment.paid_amount|intcomma}}원</span></div>
+            </div>            
+            {% if not first_payment.deliveries.all %}
+            <div>
+                <button class="customerRefundButton">결제취소</button>
+            </div>
+            {% else %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="width100 flex-center"><a href="{% url 'home:home' %}"><button class="pay-button">계속 쇼핑하기</button></div></a>
+    
+    
+    {% if request.user.is_superuser %}
+    <br>
+    <br>
+    <br>
+    <div class="page-title">관리자 결제관리 페이지</div>
+    <div class="flex pay-admin">
+        <div class="pay-title-div">
+            <div class="pay-title">주문 종합</div>
+            <div class="pay-in-div"><span class="pay-in">주문자</span><span>{{bucket_payment.user}}</span></div>
+            <div class="pay-in-div"><span class="pay-in">결제번호</span><span>{{bucket_payment.imp_uid}}</span></div>
+            <div class="pay-in-div"><span class="pay-in">주문번호</span><span>{{bucket_payment.merchant_uid}}</span></div>
+            <div class="pay-in-div"><span class="pay-in">주문상태</span><span>{% if bucket_payment.status == "paid" %}결제완료{% else %}결제 취소완료{% endif %}</span></div>
+            <div class="pay-in-div"><span class="pay-in">주문금액</span><span>{{bucket_payment.paid_amount}}</span></div>
+            <div class="pay-in-div"><span class="pay-in">결제수단</span><span>{{bucket_payment.pay_method}}</span></div>
+            <button class="refundButton">전체환불</button>
+        </div>
+        <div class="pay-title-div">
+            <div class="pay-title">개별주문 정보</div>
+            {% for e in each_payment %}
+            <div class="pay-in-div"><span class="pay-in">주문번호</span><span>{{e.merchant_uid}}</span></div>
+            <div class="pay-in-div"><span class="pay-in">주문상품</span><span>{{e.item}}</span></div>
+            <div class="pay-in-div"><span class="pay-in">상품가격</span>{{e.price}}</div>
+            <div class="pay-in-div"><span class="pay-in">상품갯수</span>{{e.item_count}}</div>
+            <div class="pay-in-div"><span class="pay-in">배송비</span><span>{{e.deli_fee}}</span></div>
+            <div class="pay-in-div"><span class="pay-in">상품총금액</span>{{e.paid_amount}}</div>
+            {% if bucket_payment.pay_method == "phone" %}
+            <div class="pay-in-div"><span class="pay-in">부분환불</span>핸드폰 결제의 경우 부분환불이 불가합니다.</div>
+            {% else %}
+            <a href="{% url 'payments:partial-refund' e.merchant_uid %}" class="partial-refund">부분환불</a>
+            {% endif %}
+            <hr>
+    {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    const customerRefundButton = document.querySelector(".customerRefundButton");
+    customerRefundButton.addEventListener("click", cancelPay);
+    
+    
+    function cancelPay(){
+        let confirmAction = confirm("정말로 결제를 취소하시겠습니까?");
+        if(confirmAction){
+            $.ajax({
+                "url": "{% url 'payments:cart-refund' %}",
+                "method": "POST",
+                "data": {
+                    "merchant_uid": "{{bucket_payment.merchant_uid}}",
+                    "cancel_request_amount": "{{bucket_payment.paid_amount}}",
+                    "reason": "테스트 환불",
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                }
+                }).done(function(){
+                    alert("결제가 취소되었습니다.");
+                    window.location.href = "{% url 'users:customer-payment-list' %}";
+                }).fail(function(){
+                    alert("취소/환불 불가합니다.\n해당하는 사유를 파악한 후 고객센터로 문의 바랍니다.\n\n1.취소/환불 권한 없음\n2.이미 취소/환불된 상품\n3.배송 완료된 상품");
+                    window.location.href = "{% url 'users:customer-payment-list' %}";
+                })
+        }
+        
+    };
+
+    try{
+        const refundButton = document.querySelector(".refundButton");
+        refundButton.addEventListener("click", cancelPay); 
+    } catch{
+        console.log("payment/cart_done.html 확인");
+    }
+    
+</script>
+{% endblock content %}

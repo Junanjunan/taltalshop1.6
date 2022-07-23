@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="list-body">
+<div class="page-title">주소 검색</div>
+<br>
+<div class="center"><hr class="width100"></div>
+<br>
+    <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+        {% csrf_token %}
+        <input hidden type="text" name="page" value=1>
+        <div class="flex-center width100">
+            <span>주소</span><input type="text" name="keyword" value="{{data.keyword}}"/>
+        <button>검색</button>
+        </div>
+    </form>
+    <br>
+    <div class="center"><hr class="width100"></div>
+    {% for a in addrList %}
+    <div class="flex-center">
+        <form class="width100" action="{% url 'users:change-user-information' request.user.pk %}" method="GET">
+            <button class="width100 addressSelectBtn">
+            <table class="address-table">
+                <tr>
+                    <td class="address-td-title">지번주소</td>
+                    <td>{{a.jibunAddr}}</td>
+                </tr>
+                <tr>
+                    <td class="address-td-title">도로명주소</td>
+                    <td>{{a.roadAddr}}</td>
+                </tr>
+                <tr>
+                    <td class="address-td-title">우편번호</td>
+                    <td>{{a.zipNo}}</td>
+                </tr>
+            </table>
+            
+            </button>
+            <div>
+            <input hidden type="text" name="phone_number" value="{{request.user.phone_number}}">
+            <input hidden type="text" name="delivery_requirement" value="{{request.user.delivery_requirement}}">
+            <input hidden type="text" name="address" value="{{a.roadAddr}}">
+            </div>
+        </form>
+    </div>
+    <div class="center"><hr class="width100"></div>
+    {% endfor %}
+    {% if currentPage %}
+    <div class="flex-center">-{{currentPage}}-</div>
+    {% endif %}
+    
+
+    <div class="flex-center pageBtnDiv">
+        {% if totalPageNumber == 0 %}
+        <div>검색 결과가 없습니다.</div>
+        
+
+        {% elif totalPageNumber == 2 %}
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=1>
+            <button>1</button>
+        </form>
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=2>
+            <button>2</button>
+        </form>
+        {% elif totalPageNumber == 3 %}
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=1>
+            <button>1</button>
+        </form>
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=2>
+            <button>2</button>
+        </form>
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=3>
+            <button>3</button>
+        </form>
+        {% elif totalPageNumber == 4 %}
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=1>
+            <button>1</button>
+        </form>
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=2>
+            <button>2</button>
+        </form>
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=3>
+            <button>3</button>
+        </form>
+        <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=4>
+            <button>4</button>
+        </form>
+        {% elif totalPageNumber > 4 %}
+        {% if currentPage <= 4%}
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=1>
+                <button>1</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=2>
+                <button>2</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=3>
+                <button>3</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=4>
+                <button>4</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=5>
+                <button>5</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=6>
+                <button>6</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value="{{totalPageNumber}}">
+                <button>{{totalPageNumber}}</button>
+            </form>
+            
+            {% elif currentPage <= totalPageNumber|add:-4 %}
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=1>
+                <button>1</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:-2}}>
+                <button>{{currentPage|add:-2}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:-1}}>
+                <button>{{currentPage|add:-1}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage}}>
+                <button>{{currentPage}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:1}}>
+                <button>{{currentPage|add:1}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:2}}>
+                <button>{{currentPage|add:2}}</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber}}>
+                <button>{{totalPageNumber}}</button>
+            </form>
+            
+            {% elif currentPage > totalPageNumber|add:-4 %}
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=1>
+                <button>1</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-5}}>
+                <button>{{totalPageNumber|add:-5}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-4}}>
+                <button>{{totalPageNumber|add:-4}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-3}}>
+                <button>{{totalPageNumber|add:-3}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-2}}>
+                <button>{{totalPageNumber|add:-2}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-1}}>
+                <button>{{totalPageNumber|add:-1}}</button>
+            </form>
+            <form action="{% url 'users:change-address' request.user.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber}}>
+                <button>{{totalPageNumber}}</button>
+            </form>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+
+
+

@@ -1,0 +1,121 @@
+
+{% block login_nav %}
+{% load static %}
+{% url 'items:item-detail' item.pk as url_detail %}
+{% url 'items:search' as url_search %}
+{% url 'items:low-price' as url_low_price %}
+{% url 'items:high-price' as url_high_price %}
+{% url 'items:pay-count' as url_pay_count %}
+{% url 'items:created' as url_created %}
+
+{% if request.path == url_detail %}
+<div class="login_nav_900">
+{% else %}
+<div class="login_nav_1100">
+{% endif %}
+    <div class="login_nav_one flex space-between">
+        <div>
+            <a href="{% url 'items:items-list' %}">전체 상품 보기</a>
+        </div>
+        <div>
+            {% if request.user.pk is not None %}
+                {% if request.user.is_superuser %}
+                <a href="{% url 'superuser:main' %}" class="login_nav_a">최고관리자페이지</a>
+                {% endif %}
+                {% if request.user.item_seller %}
+                <a href="{% url 'items:item-creating' %}" class="login_nav_a">상품등록</a>
+                {% elif request.user.item_seller_request %}
+                <button onclick="requestDoneAlarm()">판매자 신청하기</button>
+                {% else %}
+                <button onclick=
+                    "confirm('판매자 신청을 하시겠습니까?') && 
+                    requestSeller();" >판매자 신청하기</button>
+                {% endif %}
+            {% else %}
+            {% endif %}
+        </div>
+        <div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'users:status' user.pk %}" class="login_nav_a">
+        {% if user.login_method == "email" %}
+            {{user.username}}님
+        {% else %}
+            {{user.username}}님({{user.login_method}})
+        {% endif %}
+        </a>
+        <a href="{% url 'users:logout' %}" class="login_nav_a">로그아웃(Logout)</a>  
+        {% else %}
+        <a href="{% url 'users:login' %}" class="login_nav_a">로그인</a>
+        <a href="{% url 'users:signup' %}" class="login_nav_a">회원가입</a>
+        {% endif %}
+        </div>
+    </div>
+    <div class="flex space-between">
+        <div class="flex">
+            <div class="login_nav_a category flex-center">
+                <div class="absolute">
+                    <div class="text-center"><i class="fas fa-bars"></i></div>
+                    <div>카테고리</div>
+                </div>
+                <div class="category-inside">
+                    <div class="category-inside-1"><a href="{% url 'items:search' %}?name={{name__contains}}&category=shampoo">샴푸</a></div>
+                    <div class="category-inside-1"><a href="{% url 'items:search' %}?name={{name__contains}}&category=black_powder">흑채</a></div>
+                    <div class="category-inside-1"><a href="{% url 'items:search' %}?name={{name__contains}}&category=wig">가발</a></div>
+                    <div class="category-inside-1"><a href="{% url 'items:search' %}?name={{name__contains}}&category=hairbeam">헤어빔</a></div>
+                </div>
+            </div>
+            <a href="{% url 'home:home' %}" class="login_nav_a"><img src="{% static 'logo/taltal_logo.png' %}" alt="taltal_logo" width="150px"></a>
+        </div>
+        <div class="flex">
+            <form class="search_form" name="name" action="{% url 'items:search' %}" method="GET">
+            <div><input type="text" class="search_input" name="name" value="{{name__contains}}"><button class="search-button"><i class="fas fa-search"></i></button></div>
+            </form>
+        </div>
+        <div class="flex">
+            <div class="login_nav_a flex-center my-page relative">
+                <a href="{% url 'users:customer-payment-list' %}">
+                    <div class="text-center">
+                        <div><i class="fas fa-user"></i></div>
+                        <div>마이탈탈</div>
+                    </div>    
+                </a>
+                <div class="category-inside">
+                    <div class="category-inside-1"><a href="{% url 'users:customer-payment-list' %}">주문목록</a></div>
+                    <div class="category-inside-1"><a href="{% url 'users:customer-payment-cancell-list' %}">취소/반품</a></div>
+                    <div class="category-inside-1"><a href="{% url 'users:customer-favs-list' %}">찜 리스트</a></div>
+                    <div class="category-inside-1"><a href="{% url 'users:customer-inquiry-list' %}">문의 목록</a></div>
+                    <div class="category-inside-1"><a href="{% url 'reviews:personal-reviews' %}">리뷰 목록</a></div>
+                </div>
+            </div>
+            {% if user.is_authenticated %}
+            <a href="{% url 'users:customer-bucket' user.pk %}" class="login_nav_a flex-center">
+                <div class="text-center relative">
+                    <div><i class="fas fa-shopping-cart"></i><span class="bucket-count">{{request.user.totalbuckets.count}}</span></div>
+                    <div>장바구니</div>
+                </div>
+            </a>
+            {% else %}
+            <a href="{% url 'users:login' %}" class="login_nav_a flex-center">
+                <div class="text-center">
+                    <div><i class="fas fa-shopping-cart"></i></div>
+                    <div>장바구니</div>
+                </div>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    function requestDoneAlarm(){
+        alert("이미 신청된 상태입니다. 승인을 기다려주세요.");
+    };
+    
+    function requestNotYetAlarm(){
+        confirm("판매자 신청을 하시겠습니까?");
+    };
+
+    function requestSeller(){
+        window.location.replace("/users/item-seller-request/{{request.user.pk}}/")
+    };
+</script>
+{% endblock login_nav %}

@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block pagetitle %}탈탈:탈모탈출{% endblock pagetitle %}
+{% block home %}
+    {% include "partials/main_img.html" %}
+    <div class="list-body">
+        <div class="category-div">
+            <div class="categoryAndBtn">
+                <div class="category-title">
+                    <a href="{% url 'items:search' %}?name={{name__contains}}&category=shampoo">샴푸</a>
+                </div>
+                <div class="BtnDiv">
+                    <i class="fas fa-chevron-left preBtn1"></i>
+                    <i class="fas fa-chevron-right nextBtn1"></i>
+                </div>
+            </div>
+            <div class="flex slide1">
+                {% for i in shampoo_list %}
+                <div class="home-item-list slide-item1">
+                    <a href="{% url 'items:item-detail' i.pk %}"><img src="{{i.first_photo}}" alt="{{i.name}}" width="265px" height="265px"></a>
+                    <div>{{i.name}}</div>
+                    <div class="item-price">{{i.price}}<span class="won">원</span></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="category-div">
+            <div class="categoryAndBtn">
+                <div class="category-title">
+                    <a href="{% url 'items:search' %}?name={{name__contains}}&category=black_powder">흑채</a>
+                </div>
+                <div class="BtnDiv">
+                    <i class="fas fa-chevron-left preBtn2"></i>
+                    <i class="fas fa-chevron-right nextBtn2"></i>
+                </div>
+            </div>
+            <div class="flex slide2">
+                {% for i in black_powder_list %}
+                <div class="home-item-list slide-item2">
+                    <a href="{% url 'items:item-detail' i.pk %}"><img src="{{i.first_photo}}" alt="{{i.name}}" width="265px" height="265px"></a>
+                    <div>{{i.name}}</div>
+                    <div class="item-price">{{i.price}}<span class="won">원</span></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="category-div">
+            <div class="categoryAndBtn">
+                <div class="category-title">
+                    <a href="{% url 'items:search' %}?name={{name__contains}}&category=wig">가발</a>
+                </div>
+                <div class="BtnDiv">
+                    <i class="fas fa-chevron-left preBtn3"></i>
+                    <i class="fas fa-chevron-right nextBtn3"></i>
+                </div>
+            </div>
+            <div class="flex slide3">
+                {% for i in wig_list %}
+                <div class="home-item-list slide-item3">
+                    <a href="{% url 'items:item-detail' i.pk %}"><img src="{{i.first_photo}}" alt="{{i.name}}" width="265px" height="265px"></a>
+                    <div>{{i.name}}</div>
+                    <div class="item-price">{{i.price}}<span class="won">원</span></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="category-div">
+            <div class="categoryAndBtn">
+                <div class="category-title">
+                    <a href="{% url 'items:search' %}?name={{name__contains}}&category=hairbeam">헤어빔</a>
+                </div>
+                <div class="BtnDiv">
+                    <i class="fas fa-chevron-left preBtn4"></i>
+                    <i class="fas fa-chevron-right nextBtn4"></i>
+                </div>
+            </div>
+            <div class="flex slide4">
+                {% for i in hairbeam_list %}
+                <div class="home-item-list slide-item4">
+                    <a href="{% url 'items:item-detail' i.pk %}"><img src="{{i.first_photo}}" alt="{{i.name}}" width="265px" height="265px"></a>
+                    <div>{{i.name}}</div>
+                    <div class="item-price">{{i.price}}<span class="won">원</span></div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+        const slide1 = document.querySelector(".slide1");
+        const slideItem1 = document.querySelectorAll(".slide-item1");
+        const preBtn1 = document.querySelector(".preBtn1");
+        const nextBtn1 = document.querySelector(".nextBtn1");
+        var currentIndex = 0;
+        const boxWidth = 275;
+
+        function moveSlide(num){
+            slide1.style.left = -num*boxWidth + "px";
+            currentIndex = num
+        };
+
+        preBtn1.addEventListener("click", function(){
+            if(currentIndex > 0){
+                moveSlide(currentIndex-1);
+            }
+        });
+
+        nextBtn1.addEventListener("click", function(){
+            if(currentIndex < slideItem1.length -4){
+                moveSlide(currentIndex+1);
+            }
+        })
+
+        const slide2 = document.querySelector(".slide2");
+        const slideItem2 = document.querySelectorAll(".slide-item2");
+        const preBtn2 = document.querySelector(".preBtn2");
+        const nextBtn2 = document.querySelector(".nextBtn2");
+        var currentIndex2 = 0;
+
+        function moveSlide2(num){
+            slide2.style.left = -num*boxWidth + "px";
+            currentIndex2 = num
+        };
+
+        preBtn2.addEventListener("click", function(){
+            if(currentIndex2 > 0){
+                moveSlide2(currentIndex2-1);
+            }
+        });
+
+        nextBtn2.addEventListener("click", function(){
+            if(currentIndex2 < slideItem2.length -4){
+                moveSlide2(currentIndex2+1);
+            }
+        })
+
+        const slide3 = document.querySelector(".slide3");
+        const slideItem3 = document.querySelectorAll(".slide-item3");
+        const preBtn3 = document.querySelector(".preBtn3");
+        const nextBtn3 = document.querySelector(".nextBtn3");
+        var currentIndex3 = 0;
+
+        function moveSlide3(num){
+            slide3.style.left = -num*boxWidth + "px";
+            currentIndex3 = num
+        };
+
+        preBtn3.addEventListener("click", function(){
+            if(currentIndex3 > 0){
+                moveSlide3(currentIndex3-1);
+            }
+        });
+
+        nextBtn3.addEventListener("click", function(){
+            if(currentIndex3 < slideItem3.length -4){
+                moveSlide3(currentIndex3+1);
+            }
+        })
+
+        const slide4 = document.querySelector(".slide4");
+        const slideItem4 = document.querySelectorAll(".slide-item4");
+        const preBtn4 = document.querySelector(".preBtn4");
+        const nextBtn4 = document.querySelector(".nextBtn4");
+        var currentIndex4 = 0;
+
+        function moveSlide4(num){
+            slide4.style.left = -num*boxWidth + "px";
+            currentIndex4 = num
+        };
+
+        preBtn4.addEventListener("click", function(){
+            if(currentIndex4 > 0){
+                moveSlide4(currentIndex4-1);
+            }
+        });
+
+        nextBtn4.addEventListener("click", function(){
+            if(currentIndex4 < slideItem4.length -4){
+                moveSlide4(currentIndex4+1);
+            }
+        })
+
+        
+    </script>
+{% endblock home %}

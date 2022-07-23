@@ -1,0 +1,58 @@
+<div class="list-body">
+    <div class="category-div">
+        <div class="BtnDiv mainBtnDiv">
+            <i class="fas fa-chevron-left preBtnMain"></i>
+            <i class="fas fa-chevron-right nextBtnMain"></i>
+        </div>
+        <div class="flex slide-main">
+            {% for photo in photos %}
+            <div class="relative slide-item-main">
+                <a href="{% url 'items:search' %}?name={{name__contains}}&category={{photo.item_category}}">
+                    <img class="main_photo" src="{{photo.main_photo.url}}" alt="{{photo.name}}" width="1100px" height="300px" />
+                    <div class="main_photo_name">{{photo.name}}</div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    const slideMain = document.querySelector(".slide-main");
+    const slideItemMain = document.querySelectorAll(".slide-item-main");
+    const preBtnMain = document.querySelector(".preBtnMain");
+    const nextBtnMain = document.querySelector(".nextBtnMain");
+    var currentIndexMain = 0;
+    const boxWidthMain = 1100;
+
+    function moveSlideMain(num){
+        slideMain.style.left = -num*boxWidthMain + "px";
+        currentIndexMain = num
+    };
+
+    function moveSlideMain2(num){
+        slideMain.style.right = -num*boxWidthMain + "px";
+        currentIndexMain = num
+    }
+
+    preBtnMain.addEventListener("click", function(){
+        if(currentIndexMain > 0){
+            moveSlideMain(currentIndexMain-1);
+        }
+    });
+
+    nextBtnMain.addEventListener("click", function(){
+        if(currentIndexMain < slideItemMain.length-1){
+            moveSlideMain(currentIndexMain+1);
+        }
+    })
+
+    function slide(){
+        if(currentIndexMain < slideItemMain.length-1){
+            moveSlideMain(currentIndexMain+1);
+        } else{
+            moveSlideMain(currentIndexMain - (slideItemMain.length-1));
+        }
+    }
+    setInterval(slide, 3000);
+</script>

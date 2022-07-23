@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block content %}
+<div class="list-body">
+    <div class="page-title"><i class='fas fa-heart heart-color font30'></i><span class="font30">찜 리스트: </span><span>{{favs.all|length}}개</span></div>
+    {% for i in favs %}
+    <hr>
+    <div class="flex-center space-between">
+        <div class="flex">
+            <a href="{% url 'items:item-detail' i.item.pk %}"><img src="{{i.item.first_photo}}" alt="{{i.item}}" width="120px" height="120px" class="fav-img"></a>
+            <div>
+                <div><span class="fw900">{{i.item}}</span></div>
+                <div><span class="item-price">{{i.price|intcomma}}원</span></div>
+                <div><span>배송비</span><span>{{i.deli_fee}}</span></div>
+            </div>
+        </div>
+        <form class="flex-center">
+            <input class="order-quan2" type="number" name="item-count" min="1" value="1">
+            <div class="relative">
+                <div class="message-div"></div>
+                <div class="target_bucket round-box-blue" id="{{i.item.pk}}">장바구니 담기</div>
+                <div formaction="#" class="round-box">삭제</div>
+            </div>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+<script>
+    const target_bucket = document.querySelectorAll(".target_bucket");
+    const order_quan2 = document.querySelectorAll(".order-quan2");
+    const message_div = document.querySelectorAll(".message-div");
+    for(let i=0; i<target_bucket.length; i++){
+        const id = parseInt(target_bucket[i].id);
+        target_bucket[i].addEventListener("click", function(){
+            const item_count = order_quan2[i].value;
+            $.ajax({
+                method: "GET",
+                url: `/items/${id}/pushbucket/`,
+                data: {
+                    "item-count": item_count
+                }
+                }).done(function(){
+                    message_div[i].innerHTML = `
+                        <div class="message-box flex-column-center fav-message">
+                            <div>상품이 장바구니에 담겼습니다.</div>
+                            <div class="go-bucket-btn"><a href="{% url 'users:customer-bucket' request.user.pk %}">장바구니 바로가기</a></div>
+                        </div>`;
+                    setTimeout(function(){message_div[i].innerHTML = ""}, 2000);
+            })
+        })
+    }
+</script>
+{% endblock content %}
+
+action="{% url 'items:push-item' i.item.pk %}" method="GET" 
+
+<div {% if message.tags %} class='{{message.tags}}'{% endif %}>{{message}}</div>
+<div class="go-bucket-btn"><a href="{% url 'users:customer-bucket' request.user.pk %}">장바구니 바로가기</a></div>

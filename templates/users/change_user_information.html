@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="list-body">
+    <div class="page-title">회원정보 변경</div>
+    <form action="" method="POST">
+      {% csrf_token %}
+      <table class="userStatusTable width100">
+        <tbody>
+          <tr>
+            <td>아이디</td>
+            <td>{{request.user}}</td>
+          </tr>
+          <tr>
+            <td>비밀번호</td>
+            <td><button><a href="{% url 'users:change-password' request.user.pk %}" class="change-delete-text">비밀번호 수정</a></button></td>
+          </tr>
+          <tr>
+            <td>이름</td>
+            <td>{{request.user.first_name}}</td>
+          </tr>
+          <tr>
+            <td>주소</td>
+            <td>
+              <div><a href="{% url 'users:change-address' request.user.pk %}">{{form.address}}</a></div>
+              <div>{{form.address_detail}}</div>
+            </td>
+          </tr>
+          <tr>
+            <td>연락처</td>
+            <td>{{form.phone_number}}</td>
+          </tr>
+          
+          <tr>
+            <td>배송 요청사항</td>
+            <td>{{form.delivery_requirement}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="center"><button class="white-btn">저장하기</button></div>
+      
+    </form>
+    
+  </div>
+{% endblock content %}

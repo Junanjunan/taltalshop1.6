@@ -1,0 +1,8 @@
+{% if messages %}
+    {% for message in messages %}
+    <div class="message-box flex-column-center">
+        <div {% if message.tags %} class='{{message.tags}}'{% endif %}>{{message}}</div>
+        <div class="go-bucket-btn"><a href="{% url 'users:customer-bucket' request.user.pk %}">장바구니 바로가기</a></div>
+    </div>
+    {% endfor %}
+{% endif %}

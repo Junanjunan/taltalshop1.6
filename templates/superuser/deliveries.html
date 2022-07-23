@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="list-body">
+        <div class="page-title">배송관리</div>
+        <div class="deli_code_a"><a href="http://info.sweettracker.co.kr/apidoc" target="_blank">연동 택배사 코드 확인</a></div>
+        <form action="{% url 'superuser:deliveries' payment.merchant_uid %}" method="POST">
+            {% csrf_token %}
+            <div><span>택배사코드</span><input type="number" name="deli_code"></div>
+            <div><span>송장번호</span><input type="number" name="deli_number"></div>
+            <button>입력</button>
+        </form>
+    </div>
+{% endblock content %}

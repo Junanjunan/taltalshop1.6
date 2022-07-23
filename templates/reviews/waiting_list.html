@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for l in waiting_list %}
+    <hr>
+    <div><span>상품명:</span><span>{{l.item}}</span></div>
+    <div><span>주문번호:</span><span>{{l.payment}}</span></div>
+    <a href="{% url 'reviews:creating-review' l.payment %}">리뷰 쓰기</a>
+{% endfor %}
+{% endblock content %}

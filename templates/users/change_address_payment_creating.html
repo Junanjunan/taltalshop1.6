@@ -1,0 +1,381 @@
+{% extends "base2.html" %}
+
+{% block content %}
+    <button class="back">뒤로가기</button>
+    <button class="forward">자료넘기기</button>
+    <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+        {% csrf_token %}
+        <div>주소<input type="text" name="keyword" value="{{data.keyword}}"/><button>검색</button></div>
+        <input hidden type="text" name="page" value=1>
+        <input hidden type="text" name="receiver" value="{{receiver}}">
+        <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+        <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+        <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+    </form>
+    {% for a in addrList %}
+    <div class="flex-center">
+        <form class="width100" action="{% url 'users:creating-another-address' %}" method="GET">
+            <button class="width100 addressSelectBtn">
+            <table class="address-table">
+                <tr>
+                    <td class="address-td-title">지번주소</td>
+                    <td><input type="text" name="jibunAddr" value='{{a.jibunAddr}}'></td>
+                </tr>
+                <tr>
+                    <td class="address-td-title">도로명주소</td>
+                    <td><input type="text" name="roadAddr" value='{{a.roadAddr}}'></td>
+                </tr>
+                <tr>
+                    <td class="address-td-title">우편번호</td>
+                    <td><input type="text" name="zipNo" value="{{a.zipNo}}"></td>
+                </tr>
+            </table>
+            <input hidden type="text" name="page" value=1>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            </button>
+        </form>
+    </div>
+    <div class="center"><hr class="width100"></div>
+    {% endfor %}
+    {% if currentPage %}
+    <div class="flex-center">-{{currentPage}}-</div>
+    {% endif %}
+    <div class="flex-center pageBtnDiv">
+        {% if totalPageNumber == 0 %}
+        <div>검색 결과가 없습니다.</div>
+        
+
+        {% elif totalPageNumber == 2 %}
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=1>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>1</button>
+        </form>
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=2>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>2</button>
+        </form>
+        {% elif totalPageNumber == 3 %}
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=1>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>1</button>
+        </form>
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=2>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>2</button>
+        </form>
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=3>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>3</button>
+        </form>
+        {% elif totalPageNumber == 4 %}
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=1>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>1</button>
+        </form>
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=2>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>2</button>
+        </form>
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=3>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>3</button>
+        </form>
+        <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+            <input type="text" hidden name="page" value=4>
+            <input hidden type="text" name="receiver" value="{{receiver}}">
+            <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+            <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+            <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+            <button>4</button>
+        </form>
+        {% elif totalPageNumber > 4 %}
+        {% if currentPage <= 4%}
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=1>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>1</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=2>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>2</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=3>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>3</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=4>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>4</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=5>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>5</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=6>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>6</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value="{{totalPageNumber}}">
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber}}</button>
+            </form>
+            
+            {% elif currentPage <= totalPageNumber|add:-4 %}
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=1>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>1</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:-2}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{currentPage|add:-2}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:-1}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{currentPage|add:-1}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{currentPage}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:1}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{currentPage|add:1}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{currentPage|add:2}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{currentPage|add:2}}</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber}}</button>
+            </form>
+            
+            {% elif currentPage > totalPageNumber|add:-4 %}
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value=1>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>1</button>
+            </form>
+            <span>...</span>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-5}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber|add:-5}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-4}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber|add:-4}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-3}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber|add:-3}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-2}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber|add:-2}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber|add:-1}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber|add:-1}}</button>
+            </form>
+            <form action="{% url 'users:change-address-payment-creating' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" hidden name="keyword" value="{{data.keyword}}" />
+                <input type="text" hidden name="page" value={{totalPageNumber}}>
+                <input hidden type="text" name="receiver" value="{{receiver}}">
+                <input hidden type="text" name="addressDetail" value="{{addressDetail}}">
+                <input hidden type="text" name="phoneNumber" value="{{phoneNumber}}">
+                <input hidden type="text" name="deliveryRequirement" value="{{deliveryRequirement}}">
+                <button>{{totalPageNumber}}</button>
+            </form>
+            {% endif %}
+        {% endif %}
+    </div>
+    <script>
+        const back = document.querySelector(".back");
+        back.addEventListener("click", function(){
+            history.back();
+            document.querySelector(".address").value = "fkfk";
+        })
+
+        const zflip = "zplip";
+        const forward = document.querySelector(".forward");
+        forward.addEventListener("click", function(){
+            window.open("/users/change-address-payment-creating/?this="+zflip, "pop");    
+        })
+        
+    </script>
+{% endblock content %}

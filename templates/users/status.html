@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="list-body">
+  <div class="page-title">회원정보</div>
+  <table class="userStatusTable width100">
+    <tr>
+      <td>아이디(이메일)</td><td>{{request.user.username}}</td>
+    </tr>
+    <tr>
+      <td>이름</td><td>{{request.user.last_name}}{{request.user.first_name}}</td>
+    </tr>
+    <tr>
+      <td>휴대폰 번호</td><td>{{request.user.phone_number}}</td>
+    </tr>
+    <tr>
+      <td>비밀번호 변경</td>
+      <td><button><a href="{% url 'users:change-password' request.user.pk %}" class="change-delete-text">비밀번호 수정</a></button></td>
+    </tr>
+    <tr>
+      <td>배송지</td>
+      <td>{% if request.user.address %}{{request.user.address}}{% endif %} {% if request.user.address_detail %}{{request.user.address_detail}}{% endif %}</td>
+    </tr>
+    <tr>
+      <td>배송 요청사항</td>
+      <td>{{request.user.delivery_requirement}}</td>
+    </tr>
+    <tr>
+      <td>회원탈퇴</td>
+      <td><button><a href="{% url 'users:user_del' %}" class="change-delete-text">회원 탈퇴</a></button></td>
+    </tr>
+  </table>
+  <div>
+    <div class="center"><a href="{% url 'users:change-user-information' request.user.pk %}"><button class="white-btn">회원정보 변경</button></a></div>
+  </div>
+</div>
+{% endblock content %}

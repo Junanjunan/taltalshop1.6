@@ -1,0 +1,13 @@
+{% if items %}
+    {% if items.has_previous %}
+    <a href="?name={{name__contains}}&page={{items.number|add:-1}}" class="page-num">이전</a>
+    {% endif %}
+    {% for p in paginator.page_range %}
+        {% if p >= items.number|add:-4 and p <= items.number|add:4 %}
+        <a href="?name={{name__contains}}&page={{p}}" class="page-num {% if p == items.number %}now-page{% endif %}">{{p}}</a>
+        {% endif %}
+    {% endfor %}
+    {% if items.has_next %}
+    <a href="?name={{name__contains}}&page={{items.number|add:1}}" class="page-num">다음</a>        
+    {% endif %}
+{% endif %}

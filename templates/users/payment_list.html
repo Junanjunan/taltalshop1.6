@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="list-body">
+  <div class="page-title">주문목록</div>
+  {% for p in payment_list %}
+  {% if p.status == "paid" %}
+
+  <div class="border-bottom width100">
+    <div class="flex space-between">
+      <span class="font20">{{p.created|date:"Y.m.d"}} 주문</span>
+      {% if p.bucket_paid %}
+      <a href="{% url 'payments:cart-done' p.bucket_paid.merchant_uid %}" class="payment-detail-a">주문 상세 보기 <i class="fas fa-chevron-right"></i></a>
+      {% else %}
+      <a href="{% url 'payments:done' p.merchant_uid %}" class="payment-detail-a">주문 상세 보기 <i class="fas fa-chevron-right"></i></a>
+      {% endif %}
+    </div>
+    <div class="flex space-between box">
+      <div>
+        <div class="flex">
+          <div class="payment-list-img-div"><a href="{% url 'items:item-detail' p.item.pk %}"><img src="{{p.item.first_photo}}" alt="{{p.item}}" width="90px" height="90px"></a></div>
+          <div class="flex-column">
+            <div class="font17 payment-list-item-name">{{p.item}}</div>
+            <div class="font17 payment-list-item-price"><span class="payment-left-span">가격</span><span class="item-price">{{p.item.price|intcomma}}원</span></div>
+            <div class="font17"><span class="payment-left-span">주문개수</span><span class="item-price">{{p.item_count}}개</span></div>
+            <div class="font17"><span class="payment-left-span">주문번호</span>{{p}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-column-center">
+        {% if p.deliveries.all %}
+        <a href="{% url 'deliveries:deli-num' p.merchant_uid %}" class="block round-box-blue">배송조회</a>
+        <a href="" class="block round-box">교환, 반품 신청</a>
+          {% if p.reviews.done %}
+          <button class="block round-box look-done-review" id="{{p.pk}}">작성한 리뷰 보기</button>
+          {% else %}
+          <a href="{% url 'reviews:creating-review' p.merchant_uid %}" class="block round-box">리뷰 작성하기</a>
+          {% endif %}
+        {% else %}
+        <span class="block round-box">배송전</span>
+        {% endif %}
+      </div>
+    </div>
+    {% if p.reviews.done %}
+    <div class="review-box none" id="sub_{{p.pk}}">
+      <div class="flex">
+        <div class="personal-review-left">내가 준 평점 </div>
+        <div>
+          {% if p.reviews.rating == 2 %}
+          <i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i>
+          {% elif p.reviews.rating == 4 %}
+          <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i>
+          {% elif p.reviews.rating == 6 %}
+          <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i><i class="fas fa-star gray-star"></i>
+          {% elif p.reviews.rating == 8 %}
+          <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gray-star"></i>
+          {% elif p.reviews.rating == 10 %}
+          <i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i><i class="fas fa-star gold-star"></i>
+          {% endif %}
+        </div>
+      </div>
+      <div class="flex">
+        <div class="personal-review-left">리뷰 사진</div>
+        <div>
+          {% for i in p.reviews.photos.all %}
+            <img src="{{i.photo.url}}" alt="{{i.name}}" width="100px" height="100px">
+          {% endfor %}
+        </div>
+      </div>
+      <div class="flex">
+        <div class="personal-review-left">리뷰 내용 </div>
+        <div class="review-content">{{p.reviews.content}}</div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+<script>
+  const lookDoneReview = document.querySelectorAll(".look-done-review");
+  const reviewBox = document.querySelectorAll(".review-box");
+
+  for(let i=0; i<lookDoneReview.length; i++){
+    lookDoneReview[i].addEventListener("click", function(){
+      if(reviewBox[i].classList.contains("none")){
+        reviewBox[i].classList.remove("none");
+        reviewBox[i].classList.add("showing");
+        lookDoneReview[i].classList.add("blue");
+        lookDoneReview[i].innerHTML = "리뷰창 닫기";
+      } else{
+        reviewBox[i].classList.remove("showing");
+        reviewBox[i].classList.add("none");
+        lookDoneReview[i].classList.remove("blue");
+        lookDoneReview[i].innerHTML = "작성한 리뷰 보기";
+      }
+    })
+  }
+</script>
+{% endblock content %}
+
+{% if p.bucket_paid %}
+<a href="{% url 'payments:asking-cancel' p.bucket_paid.merchant_uid %}" class="block round-box">주문취소</a>
+{% else %}
+<a href="{% url 'payments:asking-cancel' p.merchant_uid %}" class="block round-box">주문취소</a>
+{% endif %}

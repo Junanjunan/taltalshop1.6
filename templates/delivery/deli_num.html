@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="list-body">
+  <h2>배송조회</h2>
+  
+  {% if delivery %}
+  <table class="width100 deli-table">
+    <thead>
+      <th>상품주문번호</th>
+      <th>상품정보</th>
+      <th>상품금액(수량)</th>
+      <th>배송비/판매자</th>
+      <th>송장번호</th>
+      <th>택배사</th>
+    </thead>
+    <tbody>
+      <td>{{delivery.payment}}</td>
+      <td>
+        <a href="{% url 'items:item-detail' delivery.payment.item.pk %}">
+          <img src="{{delivery.payment.item.first_photo}}" alt="{{delivery.payment.item}}" width="150px" height="150px">
+          <div>{{delivery.payment.item}}</div>
+        </a>
+      </td>
+      <td>{{delivery.payment.item_count}}</td>
+      <td>{{delivery.payment.deli_fee}}</td>
+      <td>{{delivery.deli_number}}</td>
+      <td>
+        <div id="{{delivery.deli_code}}" name="{{delivery.deli_code}}">      
+          {% if delivery.deli_code == "04" %}
+            CJ대한통운
+          {% elif delivery.deli_code == "05" %}
+            한진택배
+          {% elif delivery.deli_code == "08" %}
+            롯데택배
+          {% elif delivery.deli_code == "01" %}
+          우체국택배
+          {% elif delivery.deli_code == "06" %}
+          로젠택배
+          {% elif delivery.deli_code == "11" %}
+          일양로지스
+          {% elif delivery.deli_code == "20" %}
+          한덱스
+          {% elif delivery.deli_code == "22" %}
+          대신택배
+          {% elif delivery.deli_code == "23" %}
+          경동택배
+          {% elif delivery.deli_code == "32" %}
+          합동택배
+          {% elif delivery.deli_code == "46" %}
+          CU편의점택배
+          {% elif delivery.deli_code == "24" %}
+          GS Postbox 택배
+          {% elif delivery.deli_code == "16" %}
+          한의사랑택배
+          {% elif delivery.deli_code == "17" %}
+          천일택배
+          {% elif delivery.deli_code == "18" %}
+          건영택배
+          {% elif delivery.deli_code == "40" %}
+          굿투럭
+          {% elif delivery.deli_code == "43" %}
+          애니트랙
+          {% elif delivery.deli_code == "44" %}
+          SLX택배
+          {% elif delivery.deli_code == "45" %}
+          호남택배
+          {% elif delivery.deli_code == "47" %}
+          우리한방택배
+          {% elif delivery.deli_code == "53" %}
+          농협택배
+          {% elif delivery.deli_code == "54" %}
+          홈픽택배
+          {% elif delivery.deli_code == "71" %}
+          IK물류
+          {% elif delivery.deli_code == "72" %}
+          성훈물류
+          {% elif delivery.deli_code == "74" %}
+          용마로지스
+          {% elif delivery.deli_code == "75" %}
+          원더스퀵
+          {% elif delivery.deli_code == "79" %}
+          티피엠코리아(주) 용달이 특송
+          {% elif delivery.deli_code == "82" %}
+          컬리로지스
+          {% elif delivery.deli_code == "85" %}
+          풀앳홈
+          {% elif delivery.deli_code == "86" %}
+          삼성전자물류
+          {% elif delivery.deli_code == "88" %}
+          큐런택배
+          {% endif %}
+        </div>
+        <button><a href="{% url 'deliveries:deli-detail' delivery.payment.merchant_uid %}">배송조회</a></button>
+      </td>
+    </tbody>
+  </table>
+  {% else %}
+  <h2>아직 배송이 시작되지 않았습니다.</h2>
+  {% endif %}
+</div>
+{% endblock content %}

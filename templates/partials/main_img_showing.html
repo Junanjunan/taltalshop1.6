@@ -1,0 +1,28 @@
+{% for photo in photos %}
+<div class="none">
+    <div class="relative">
+        <a href="{% url 'items:search' %}?name={{name__contains}}&category={{photo.item_category}}">
+            <img class="main_photo" src="{{photo.main_photo.url}}" alt="{{photo.name}}" width="1200px" height="200px" />
+            <div class="main_photo_name">{{photo.name}}</div>
+        </a>
+    </div>
+</div>
+{% endfor %}
+<script>
+    const SHOWING_CLASS = "showing";
+    const firstSlide = document.querySelector(".none");
+    firstSlide.classList.add(SHOWING_CLASS);
+    function slide(){
+        const currentSlide = document.querySelector(`.${SHOWING_CLASS}`);
+        if (currentSlide){
+            currentSlide.classList.remove(SHOWING_CLASS);
+            const nextSlide = currentSlide.nextElementSibling;
+            if (nextSlide.className==='none'){
+                nextSlide.classList.add(SHOWING_CLASS);
+            } else{
+                firstSlide.classList.add(SHOWING_CLASS);
+            }
+        }
+    }
+    setInterval(slide, 3000);
+</script>

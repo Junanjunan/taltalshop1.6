@@ -1,0 +1,179 @@
+<div>
+    {% if item.rating == 0 %}
+    {% elif item.rating <= 1.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+        <i class="fas fa-star-half gold-star star-half-before"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 2.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 3.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+        <i class="fas fa-star-half gold-star star-half-before"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 4.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 5.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+        <i class="fas fa-star-half gold-star star-half-before"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 6.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 7.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+        <i class="fas fa-star-half gold-star star-half-before"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 8.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 9.5 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gray-star star-background"></i>
+        <i class="fas fa-star-half gold-star star-half-before"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% elif item.rating <= 10 %}
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="star-bind">
+        <i class="fas fa-star gold-star star-background"></i>
+    </span>
+    <span class="rating-count">({{item.reviews.all|length}})</span>
+    {% endif %}
+</div>

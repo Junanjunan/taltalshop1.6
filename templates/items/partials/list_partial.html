@@ -1,0 +1,15 @@
+{% load humanize %}
+
+<div class="each-item">
+    <a href="{% url 'items:item-detail' item.pk  %}">
+        <div class="two-photos">
+            <img src="{{item.second_photo}}" class="second-photo" alt="{{item.name}}">
+            <img src="{{item.first_photo}}" class="first-photo" alt="{{item.name}}">
+        </div>
+        <div class="flex space-between item-title">
+            <div class="item-list-name">{{item.name}}</div>
+        </div>
+        <div><span class="item-price">{{item.price|intcomma}}</span><span class="won">원</span>{% if item.rocket %}[로켓배송]{% endif %}</div>
+        {% include "mixins/rating_star.html" with item=item %}
+    </a>
+</div>

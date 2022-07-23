@@ -1,0 +1,71 @@
+<div class="list-bucket">
+    <div class="list-bucket-in">
+        
+        {% if authenticated %}
+        <a href="{% url 'users:customer-bucket' request.user.pk %}">
+            <div class="list-bucket-title">
+                장바구니
+            </div>
+        </a>
+        {% else %}
+        <a href="{% url 'users:login' %}">
+            <div class="list-bucket-title">
+                장바구니
+            </div>
+        </a>
+        {% endif %}
+        <div class="list-bucket-title">최근본 상품</div>
+        <div class="lately"></div>
+    </div>
+    <div class="bind12">
+        <button class="bind1">1</button><button class="bind2">2</button>
+    </div>
+</div>
+<script>
+    const lately = document.querySelector(".lately");
+    if(localStorage.getItem("item")){
+        items = JSON.parse(localStorage.getItem("item"))
+        items_length = JSON.parse(localStorage.getItem("item")).length;
+        for (let i=0; i<5; i++){
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("lately1");
+            itemDiv.innerHTML = `<a href="/items/${items[i][2]}/" class="lately-a"><div class="lately-detail"><div class="lately-name">${items[i][0]}</div><div class="lately-price">${items[i][3]}</div></div><img class="lately-img" src=${items[i][1]} width="60px" height="60px"></a>`;
+            lately.appendChild(itemDiv);
+        }
+        for (let i=5; i<items_length; i++){
+            if(i===10){
+                break;
+            }
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("lately2");
+            itemDiv.classList.add("none");
+            itemDiv.innerHTML = `<a href="/items/${items[i][2]}/" class="lately-a"><div class="lately-detail"><div class="lately-name">${items[i][0]}</div><div class="lately-price">${items[i][3]}</div></div><img class="lately-img" src=${items[i][1]} width="60px" height="60px"></a>`;
+            lately.appendChild(itemDiv);
+        }
+    }
+
+    
+
+    const lately1s = document.querySelectorAll(".lately1");
+    const lately2s = document.querySelectorAll(".lately2");
+
+    const bind1 = document.querySelector(".bind1");
+    bind1.addEventListener("click", function(){
+        for (let l of lately2s){
+            l.classList.add("none");
+        }
+        for (let l of lately1s){
+            l.classList.remove("none");
+        }
+    })
+
+    const bind2 = document.querySelector(".bind2");
+    bind2.addEventListener("click", function(){
+        for (let l of lately1s){
+            l.classList.add("none");
+        }
+        for (let l of lately2s){
+            l.classList.remove("none");
+        }
+    })
+</script>

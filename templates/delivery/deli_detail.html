@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="list-body">
+    <table class="width100 deli-table">
+        <thead>
+            <tr>
+                <th>시간</th>
+                <th>현재 위치</th>
+                <th>배송 상태</th>
+                <th>연락처</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in t_res.trackingDetails %}
+            <tr>
+                <td>{{i.timeString}}</td>
+                <td>{{i.where}}</td>
+                <td>{{i.kind}}</td>
+                <td>{{i.telno}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
+

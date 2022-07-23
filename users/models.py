@@ -1,7 +1,12 @@
+import uuid
+from django.conf import settings
 from django.db import models
+from django.contrib import messages
 from django.contrib.auth.models import AbstractUser
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
 
-# Create your models here.
 
 class User(AbstractUser):
     LOGIN_EMAIL = "email"
@@ -35,3 +40,71 @@ class User(AbstractUser):
         default=0, blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
+
+    def verify_email(self):
+        if self.email_verified is False:
+            secret = uuid.uuid4().hex[:20]
+            self.email_secret = secret
+            if settings.DEBUG == True:
+                html_message = render_to_string(
+                    "emails/verify_email_dev.html", {"secret": secret}
+                )
+            else:
+                html_message = render_to_string(
+                    "emails/verify_email_deploy.html", {"secret": secret}
+                )
+            send_mail(
+                "탈탈샵 회원가입 인증 메일입니다.",
+                strip_tags(html_message),
+                settings.EMAIL_HOST_USER,
+                [self.email],
+                fail_silently=False,
+                html_message=html_message,
+            )
+            self.save()
+        else:
+            messages.error(self.request, "E!!!!!")
+
+
+class Bucket(models.Model):
+    user = models.ForeignKey(
+        "User", related_name="totalbuckets", on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        "items.Item", related_name="totalbuckets", on_delete=models.CASCADE)
+    item_count = models.PositiveIntegerField()
+    deli_fee = models.PositiveIntegerField()
+
+    def price(self):
+        price = self.item.price
+        return price
+
+    def total_price(self):
+        total_price = self.item.price * self.item_count
+        return total_price
+
+
+class Fav(models.Model):
+    user = models.ForeignKey(
+        "User", related_name="favs", on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        "items.Item", related_name="favs", on_delete=models.CASCADE)
+    item_count = models.PositiveIntegerField(default=1)
+
+    def price(self):
+        price = self.item.price
+        return price
+
+    def deli_fee(self):
+        deli_fee = self.item.deli_fee
+        return deli_fee
+
+    def __str__(self):
+        return self.item.name
+
+class AnotherAddress(models.Model):
+    user = models.ForeignKey("User", related_name="another_addresses", on_delete=models.CASCADE)
+    receiver = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=25)
+    address = models.CharField(max_length=100)
+    address_detail = models.CharField(max_length=100)
+    delivery_requirement = models.CharField(max_length=150, null=True, blank=True)

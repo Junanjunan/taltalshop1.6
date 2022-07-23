@@ -1,0 +1,23 @@
+<div class="list-body">
+    <div class="category-div">
+        <div class="categoryAndBtn">
+            <div class="BtnDiv">
+                <i class="fas fa-chevron-left preBtnMain"></i>
+                <i class="fas fa-chevron-right nextBtnMain"></i>
+            </div>
+        </div>
+        <div class="flex slide-main">
+            {% for photo in photos %}
+            <div class="relative slide-item-main">
+                <a href="{% url 'items:search' %}?name={{name__contains}}&category={{photo.item_category}}">
+                    <img class="main_photo" src="{{photo.main_photo.url}}" alt="{{photo.name}}" width="1200px" height="200px" />
+                    <div class="main_photo_name">{{photo.name}}</div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+    
+</script>

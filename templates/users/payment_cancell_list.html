@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="list-body">
+  <div class="page-title">취소/반품목록</div>
+  
+  {% if cancelled_list %}
+    {% for c in cancelled_list %}
+    <div class="border-bottom width100">
+      <div class="flex space-between">
+        <span class="font20">{{c.created|date:"Y.m.d"}} 주문</span>
+        <a href="">주문 상세 보기</a>
+      </div>
+      <div class="flex space-between box">
+        <div>
+          <div class="font20"><span>배송완료 - </span><span class="green">9/21(화) 도착</span></div>
+          <div class="flex">
+            <a href="{% url 'items:item-detail' c.item.pk %}"><img src="{{c.item.first_photo}}" alt="{{c.item}}" width="90px" height="90px"></a>
+            <div class="flex-column-center">
+              <div class="font17">{{c.item}}</div>
+              <div class="font17">{{c.item.price|intcomma}}원</div>
+            </div>
+          </div>
+        </div>
+        <div class="flex-column-center">
+          <span class="block round-box">취소완료</span>
+          <a href="" class="block round-box-blue">취소상세</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div class="center">취소 내역이 없습니다.</div>
+  {% endif %}
+</div>
+{% endblock content %}
