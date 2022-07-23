@@ -49,7 +49,7 @@ PROJECT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "django_countries",
+    "django_countries", "django-storages"
 ]
 
 INSTALLED_APPS = Django_APPS + PROJECT_APPS + THIRD_PARTY_APPS
