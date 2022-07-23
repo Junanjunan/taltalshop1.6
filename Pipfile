@@ -10,6 +10,7 @@ pillow = "*"
 pipenv-to-requirements = "*"
 sentry-sdk = "*"
 psycopg2 = "*"
+django-storages = "*"
 
 [dev-packages]
 
