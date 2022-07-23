@@ -167,7 +167,7 @@ if not DEBUG:
     AWS_STORAGE_BUCKET_NAME = 'taltalshop1.6'
     AWS_DEFAULT_ACL = 'public-read'
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86500'}
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.ap-northeast-2.amazonaws.com'
+    AWS_S3_CUSTOM_DOMAIN = f's3.ap-northeast-2.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 
     sentry_sdk.init(
