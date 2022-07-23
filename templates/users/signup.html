@@ -5,7 +5,7 @@
 </head>
 
 <div class="flex-column-center login-page">
-  <a href="{% url 'home:home' %}"><img src="{% static 'logo/taltal_logo.png' %}" alt="taltal_logo"></a>
+  <a href="{% url 'home:home' %}"><img src="{% static 'logo/taltal_logo.PNG' %}" alt="taltal_logo"></a>
   <form method="POST" action="{% url 'users:signup' %}">
       {% csrf_token %}
       <div>{{form.as_p}}</div>
