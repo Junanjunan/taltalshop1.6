@@ -44,7 +44,6 @@ Django_APPS = [
 ]
 
 PROJECT_APPS = [
-    "core.apps.CoreConfig",
     "home.apps.HomeConfig",
     "users.apps.UsersConfig",
     "items.apps.ItemsConfig",
