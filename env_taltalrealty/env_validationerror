@@ -1,0 +1,24 @@
+https://docs.djangoproject.com/en/dev/ref/forms/validation/#raising-validationerror
+
+    When ModelForms are bound to a model object, they have an attribute called 'instance', which is the model object itself. In your view, when request.method == 'POST', you're probably creating the form instance like this:
+
+    form = ChangeNameForm(request.POST, instance=request.user)
+
+
+    If that's the case, you can access the logged user from the form methods, and your validation method can be something like this:
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        try:
+            user = User.objects.exclude(pk=self.instance.pk).get(username=username)
+        except User.DoesNotExist:
+            return username
+        raise forms.ValidationError(u'Username "%s" is already in use.' % username)
+
+    Consider using the .exists method, for it issues a faster query to your database than if you try to retrieve all the user information with the .get method. And the code gets a little cleaner too:
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        if User.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
+            raise forms.ValidationError(u'Username "%s" is already in use.' % username)
+        return username

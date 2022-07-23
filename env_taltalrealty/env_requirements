@@ -1,0 +1,6 @@
+pipenv install pipenv-to-requirements 해주고 
+pipenv lock -r > requirements.txt
+
+다른 환경에서 개발하던 자료 그대로 설치할때
+    다른 환경에서 만든 requirements.txt 파일 복하고, 원하는 경로에서
+    pip install -r requirements.txt

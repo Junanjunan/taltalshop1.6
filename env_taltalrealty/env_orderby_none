@@ -1,0 +1,488 @@
+1. pipenv - https://pipenv.pypa.io/en/latest/install/#installing-pipenv
+
+    1) pip install --user pipenv 
+        기능: pipenv 설치 
+        확인: pipenv 
+        오류시: 혹시나 윈도우 환경에서 콘솔에서 pipenv 쳤을 때 진행 안되시는 분은
+                pip list 에서 virtualenv 이 설치되어있는지 확인 해주시고
+                pip uninstall virtualenv
+                pip uninstall pipenv
+                pip install pipenv
+               
+    2) pipenv --three
+        기능: 가상환경 생성 (버블 생성)
+        의미: --three: python 버전이 3.x 이므로
+        특징: Pipfile 생성됨
+    
+    3) pipenv shell
+        기능: 가상환경(버블) 안으로 접근
+
+# 그외 설치해줘야 하는 것들
+    - pipenv install pillow -> ImageField 등을 쓰기 위해 (pillow: 이미지 처리하는 파이썬 library) (강의 #3.2)
+    - pipenv install django-countries & INSTALLED_APPS에 "django_countries" 설치 & from django_countries.fields import CountryField
+    - pipenv install django_seed (fake 데이타 뿌려줄 때)
+
+2. django 설치 - https://www.djangoproject.com/download/
+    
+    1) pipenv install Django==3.1.5  (3.1.5는 버전 의미)
+        기능: django 설치
+        특징: Pipfile.lock 생성, 
+            Pipfile에 [packages]
+                      django = "==3.1.5"
+            생성    
+    2) django-admin
+        기능: ??
+
+
+
+3. django 시작
+    
+    1) django-admin startproject config 
+        기능: config 파일 생성
+        추가: config 폴더 안에 있는 config 폴더와 mange.py 파일 밖으로 꺼내기 (맨 밖의 config 파일은 삭제/꺼내기전 이름 변경)
+
+    2) django-admin startapp 폴더이름(복수형) (강의 #2.6)
+        기능: 기본 파일들 생성(__init__.py, admin.py, apps.py, models.py, tets.py, views.py)
+        주의사항: django-admin startapp 복수형 폴더이름으로 생기는 내부의 파일명들은 절대 변경 X -> Django가 지켜보도록 세팅된 파일명 (강의 #2.7)
+
+4. 실행
+    1) python manage.py createsuperuser
+    2) python manage.py makemigrations
+    3) python manage.py migrate
+    3) python manage.py runserver
+
+
+#. url 고치기
+    1) config/urls.py -> urlpatterns의 "admin"을 "kimchi"로 바꿔보자 --> http://127.0.0.1:8000/kimchi (이게 admin 사이트가 됨)
+    2) config/urls.py: 웹사이트의 url 컨트롤 --> 모든 url들이 여기에 들어가야 되는데, 너무 커지는 건 통제가 힘드니 각 application마다 urls.py를 만들어서 나누어서 관리 -> 어쨌든 config/urls.py에 합쳐줘야 함..? (강의 #2.7)
+
+# core
+    1) class Meta:
+          abstract = True :  (강의 #4.0) 
+           -> core/models.py가 데이터베이스에 저장되지 않도록 함 (abstract Model은 데이타베이스에 나타나지 않도록 해주는 Model 임)
+            왜냐면 core/models.py 를 확장해서 사용한 다른 Model(ex. rooms/models.py, reviews/models.py)이 데이터베이스에 저장되도록 해야 함
+           --> 그래서 users/models.py 에 AbstractUser도 데이터베이스에 등록되지 않는다.(AbstractUser도 abstract Model 이기 때문에)
+    2) auto_now, auto_now_add
+            DateTimeField에 쓰이는 기능
+            auto_now=True -> 필드가 Model을 save할 때 date랑 time을 기록? 보여줌? --> updated에 쓰기 
+            auto_now_add=True -> 필드가 Model을 생성할 때마다 업데이트 해서 기록? 보여줌? --> created에 쓰기
+
+# Meta Class (강의 #4.5)
+    모델 내의 모든 class들 안에 있는 class
+    class 내에서 class Meta: 해주고 여러가지 설정 가능 -> djangoproject documents에서 확인
+    1) verbose_name_plural: 복수형 설정 - if this isn't given, Django will use verbose_name + "s"
+    2) verbose_name: If this isn't given, Django will use a munged version of the class name: ex) Camel Case -> camel case
+
+#. users
+    models extend (https://docs.djangoproject.com/en/3.1/topics/auth/customizing/)
+        1) users extend (강의 # 3.0)
+            - settings.py 에 INSTALLED_APPS에 "폴더명.apps.클래스명" 추가 ("users.apps.UsersConfig")
+            - settings.py 에 AUTH_USER_MODEL = '폴더명(users).클래스명(User)  : 기본 user model 말고 내가 customazing한 user model 쓰기 위해서          
+            - database 한번 삭제하고 migrate 해줘야 정상 작동
+            - admin에 users 없어져있음 (default admin을 변경했기 때문) -> admin.py에 users 추가
+                admin패널에 나타나는 이름: 폴더명(앞은 자동 대문자) -폴더명 users의 models 안의 클래스명을 UserKKK로 했는데 admin 패널에 Users로 나오는 것으로 보아서
+        2) admin
+            - (강의 #3.5)기본은 admin.modelAdmin인데 / UserAdmin으로 좀더 세분화해서 사용(from django.contrib.auth.admin import UserAdmin)
+# models
+    - settings.py의 INSTALLED_APPS에 만들어준 application 모두 등록 (강의 #4.0)
+    - models의 field 값에 default 넣어주는 이유 (강의 #3.2)
+        - database의 특성: 한번에 만들어지는 data가 아니라 추가 되는 데이터일 경우, null=True 또는 default 값을 설정 해주어야 한다. - database 지우고 migrations도 다 지우고 다시 만들때는 null=True 또는 default 값 설정 안해줘도 됨
+            null=True vs balnk=True -> null은 데이터베이스에서, balnk는 website에서 빈값주고 넘어가기 위해 사용
+            blank=True 안되어있으면 admin패널에서 해당 타이틀 font가 bold로 표시됨
+    - models field값에 choices 쓸때 나오는 값
+            GENDER_MALE = "male"
+            GENDER_FEMALE = "female"        
+            GENDER_CHOICES = (
+                (GENDER_MALE, "Maleee"),
+                (GENDER_FEMALE, "Femaleee")
+            )   
+            gender = models.CharField(choices=GENDER_CHOICES,max_length=10, null=True)  
+        위와 같이 했을 때 admin 패널에서 나오는 값은 Maleeee, Femaleee 임 (male, female이 아니라)
+        (GENDER_MALE, "Maleee") 에서 GENDER_MALE 은 database에, Maleee는 admin 패널에 보여지는 값 (강의 #3.3)
+
+    - function : models.py에서 function을 만들어서, admin에서 사용할 수 있다. -> 여러 곳에서 사용하기 위해서(홈페이지에도 보여주고) admin이 아니라 models.py 에서 만들어서 admin.py에서 불러서 사용 (강의 #8.0)
+
+    - save() and save_model() (강의 #8.8)
+        save() method : model을 위한 save 기능, Django의 모든 model들은 save() method를 가지고 있음 
+            def save(self, *args, **kwargs):
+                super().save(*args, **kwargs)
+        save_model() method: admin을 위한 save 기능
+            def save_model(self, request, obj, form, change):
+                super().save_model(request, obj, form, change)
+        save() method or save_model() method를 이용해서 저장시 조작을 할것임(intercept로 표현)(ex- seoul 저장시 Seoul로 자동 저장)
+
+
+# admin
+    - admin.py에 model이 나타나게 하는 방법 2가지 (강의 #3.4)
+        1) @admin.register(models.User)
+        class CustomUserAdmin(admin.modelAdmin) --> 앞으로 계속 쓰게 될 방법: decorator
+        2) admin.site.register(models.User, CustomUserAdmin)
+    - search_fields = ("=city", "^host__username") : Admin 의 class 안에 들어가는 검색기능
+        host는 ForeignKey로 연결되어 있는 model의 한 요소 -> 언더 바 2개로 연결 (__) -> ^host__username
+        (https://docs.djangoproject.com/en/3.1/ref/contrib/admin/)
+    - fieldsets -> 'classes':('collapse') -> fieldsets를 접을 수 있게 해줌 (강의 # 6.1)
+    
+    ** ModelAdmin (강의 #6.2) (class RoomAdmin(admin.ModelAdmin))
+        1) ordering: ordering = ('name', 'price', 'bedrooms') 
+        2) admin function --> 두가지 인자 받음 : self, obj --> self는 admin의 class 자신, obj는 admin과 연결된 models의 class
+            rooms/admin.py/class RoomAdmin
+                def count_amenities(self, obj):
+                return obj.room_type
+            -> self: class RoomAdmin , obj: rooms/models.py/class Room
+        3) short_description: count_amenities.short_description = "~~"  -> admin 패널에서 보여지는 값을 변경해줌 
+    
+    - raw_id_fields (강의 # 8.6): foreign key or many-tomany field 를 더 나은 방법으로 찾게 해준다 -> 항목이 많을때, 추가 창을 띠워서 볼 수 있게 해줌(user가 많아질때 유용)
+
+    -  InlineModelAdmin (강의 # 8.6)
+        InlineModelAdmin : admin 안에 또 다른 admin을 넣는 방법 (ex- RoomAdmin 안에 PhotoAdmin 넣어서 Room에서 사진 첨부하기)
+        ex) rooms/admin.py에서 아래와 같이 해주면 Inlines를 통해 RoomAdmin안에 PhotoAdmin 생김
+
+            class PhotoInline(admin.TabularInline): 
+                model = models.Photo
+
+            @admin.register(models.Room)
+            class RoomAdmin(admin.ModelAdmin):
+                inlines = (PhotoInline,)
+
+        응용: TabularInline 말고 StackedInline도 있음
+    
+
+    - save() and save_model() (강의 #8.8)
+        save() method : model을 위한 save 기능, Django의 모든 model들은 save() method를 가지고 있음 
+            def save(self, *args, **kwargs):
+                super().save(*args, **kwargs)
+        save_model() method: admin을 위한 save 기능
+            def save_model(self, request, obj, form, change):
+                super().save_model(request, obj, form, change)
+        save() method or save_model() method를 이용해서 저장시 조작을 할것임(intercept로 표현)(ex- seoul 저장시 Seoul로 자동 저장)
+
+
+# ForeignKey (강의 #4.2)
+    1) many-to-one relationship
+        - 하나가 여러개를 가질 수 있을 때, 여러개에 속하는 곳을 models.ForeignKey가 있는 소스로 둔다
+            ex. User는 여러개의 Room을 가질수 있다. 따라서 rooms/models.Room에 models.ForeignKey 작성
+    2) on_delete :
+        models.CASCADE -> Django Documents에서 ForeignKey/Model field reference 검색해서 보면 됨 (강의 #4.4)
+        CASCADE, SET_NULL, SET_DEFAULT, SET(), DO_NOTHING 등 볼 수 있음
+        * SET_NULL : ForeignKey로 소스와 타겟이 연결되었다고 할 때, 타겟(부모)이 삭제되어도 소스가 삭제되지 않길 원할 때 
+    3) strings (string화?) (강의 #4.5)
+        Photo안에 class Room을 사용할 것인데, 파이썬 코딩은 위에서 아래로 수직방향으로 읽기 때문에
+        class Photo를 class Room 아래에 설정해주어야 한다. (NameError 발생 NameError: name 'Room' is not defined)
+        ---> 이 번거로움을 막기 위해서 ForeignKey로 연결해줄 class 명에 str화를 해준다.
+        room = models.ForeignKey(Room, on_delete=models.CASCADE) -> 반드시 class Photo가 class Room보다 아래 생성
+        room = models.ForeignKey("Room", on_delete=models.CASCADE) -> 이렇게 str화 해주면 상관 없음
+    4) __ : (강의 # 6.1)
+        admin에서 search_fields, list_filter 를 ForeignKey로 연결된 것에 적용할 때, __ 사용
+    5)  (강의 #7.3) 
+        class Room에 photo와 관련된 것이 없지만
+        class Photo에 room에 연결한 ForeginKey가 있기 때문에
+        Roomadmin에서 Room을 photo와 관련된 것을 가진것 처럼 쓸 수 있다.
+
+        @admin.register(models.Room)
+        class RoomAdmin(admin.ModelAdmin):
+            def count_photos(self, obj):
+            return obj.photos.count()
+            --> photos는 원래는 photo_set (return obj.photo_set.count()) 였는데 related_name으로 photos로 변경된 것임을 기억하자
+
+
+
+# many-to-many relationship 
+    1) rooms/models.py에 (강의 # 4.3)
+            class AbstractItem(core_models, TimeStampedModel):
+                class Meta:
+                    abstract = True   쓰는 이유
+        -> Amenity, Facility 등을 사용하기 위해서
+        -> AbstractItem이 데이터베이스에 기록되면 안되고
+        -> AbstractItem을 통해서 만들어진 RoomType, Amenity, Facility등이 기록될것이기 때문에 AbstractItem은 abstract=True 해줌
+    2) filter_horizontal: (강의 #6.1)
+    3) .add() : many-to-many field에서 무언가를 추가하는 방법임
+        room.amenities.add(a)
+    
+
+# class 안의 def 의 self (강의 #4.3)
+    class Rooms(~):
+        name = ~~
+        def __str__(self):
+        return self.name
+        -> self는 def가 속한 class(Rooms)를 가르킨다
+
+# object(ForeignKey, ManyTomManyField로 연결된 것)에 어떻게 접근을 하고, 어떤 방식으로 수행되는지 이해하기 (강의 #7.0~ #7.1)
+    Managers & QuerySets 에 대한 이해
+        
+        ** 콘솔로 Django 작동시키기 **
+            해당파일로 접근(vscode에서는 해당 파일 열어주고 console 실행하면 됨)
+            
+            -> pipenv shell (버블 활성화)
+            -> python manage.py shell (Django configuration(설정)과 models를 사용해서 프로젝트와 소통하기 위해)
+            -> from users.models import User (User에 접근)
+            
+                콘솔에 아래 왼쪽과 같이 입력시 오른쪽 출력
+                    User : <class 'users.models.User'>
+                    vars(User)
+                    dir(USer)
+                        vars and dir in python
+                        vars: vars([object]) -> Return the __dict__ attribute for a module, class, instance, or any other object with a __dict__ attribute.
+                            -> 강의 표현: returns the __dict__ dictionary or the representation in a list of class
+                        dir: dir([object]) -> Without arguments, return the list of names in the current local scope. With an argument, attempt to return a list of valid attributes for that object.
+                            -> 강의 표현: returns the list of names inside of the class
+
+                    User.objects: <django.contrib.auth.models.UserManager object at 0x000001ACC1ED74C0>
+                        -> Manager 확인 가능(UserManager)
+                            -> Manager가 파이썬을 이용해서 databse로 부터 elements를 가져오게 해줌 (sql을 쓰지 않고 python으로 -> 이게 장고의 큰 이점)
+                    
+                    User.objects.all(): <QuerySet [<User: taltal>]>
+                        -> 모든 user를 QuerySet으로 준다
+                        ** QuerySet -> database로부터 온 장고 objects이다.(내부에 많은 것을 내포한 리스트)
+                        ex) User.objects.all().filter(superhost=False): <QuerySet [<User: taltal>]>
+                            User.objects.all().filter(superhost=True): <QuerySet []>
+                    
+                            ************* djangoproject.documents에서 QuerySet API 살펴보기 *************
+
+                    tal = User.objects.get(username="taltal") -> username으로 user 가져오기
+
+                    vars(tal): {'_state': <django.db.models.base.ModelState object at 0x000001ACC29972B0>, 'id': 1, 'password': 'pbkdf2_sha256$216000$wCNz4JgYhuH0$htFxMMVIT2j+FIOKqGFJJcVGZYTNB0aynLwm9IrwsvI=', 'last_login': datetime.datetime(2021, 2, 2, 10, 40, 44, tzinfo=<UTC>), 'is_superuser': True, 'username': 'taltal', 'first_name': '', 'last_name': '', 'email': '', 'is_staff': True, 'is_active': True, 'date_joined': datetime.datetime(2021, 2, 2, 2, 7, 26, tzinfo=<UTC>), 'avatar': '', 'gender': '', 'bio': '', 'birthdate': None, 'language': '', 'currency': '', 'superhost': False}
+                        -> 여러가지 값 얻는데 특히, <<<'id'>>> 값도 있다. 대부분 models에서 설정해준 key, value 가 있는 듯
+                    
+                    dir(tal): ['CURRENCY_CHOICES', 'CURRENCY_USD', 'DoesNotExist', 'EMAIL_FIELD', 'GENDER_CHOICES', 'GENDER_FEMALE', 'GENDER_MALE', 'LANGUAGE_CHOICES', 'LANGUAGE_ENGLISH', 'LANGUAGE_KOREAN', 'Meta', 'MultipleObjectsReturned', 'REQUIRED_FIELDS', 'USERNAME_FIELD', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_check_column_name_clashes', '_check_constraints', '_check_field_name_clashes', '_check_fields', '_check_id_field', '_check_index_together', '_check_indexes', '_check_local_fields', '_check_long_column_names', '_check_m2m_through_same_relationship', '_check_managers', '_check_model', '_check_model_name_db_lookup_clashes', '_check_ordering', '_check_property_name_related_field_accessor_clashes', '_check_single_primary_key', '_check_swappable', '_check_unique_together', '_do_insert', '_do_update', '_get_FIELD_display', '_get_next_or_previous_by_FIELD', '_get_next_or_previous_in_order', '_get_pk_val', '_get_unique_checks', '_legacy_get_session_auth_hash', '_meta', '_password', '_perform_date_checks', '_perform_unique_checks', '_save_parents', '_save_table', '_set_pk_val', '_state', 'avatar', 'bio', 'birthdate', 'check', 'check_password', 'clean', 
+                                'clean_fields', 'conversation_set', 'currency', 'date_error_message', 'date_joined', 'delete', 'email', 'email_user', 'first_name', 'from_db', 'full_clean', 'gender', 'get_all_permissions', 'get_currency_display', 'get_deferred_fields', 'get_email_field_name', 'get_full_name', 'get_gender_display', 'get_group_permissions', 'get_language_display', 'get_next_by_date_joined', 'get_previous_by_date_joined', 'get_session_auth_hash', 'get_short_name', 'get_user_permissions', 'get_username', 'groups', 'has_module_perms', 'has_perm', 'has_perms', 'has_usable_password', 'id', 'is_active', 'is_anonymous', 'is_authenticated', 'is_staff', 'is_superuser', 'language', 'last_login', 'last_name', 'list_set', 'logentry_set', 'message_set', 'natural_key', 'normalize_username', 'objects', 'password', 'pk', 'prepare_database_save', 'refresh_from_db', 'reservation_set', 'review_set', 'room_set', 'save', 'save_base', 'serializable_value', 'set_password', 'set_unusable_password', 'superhost', 'unique_error_message', 'user_permissions', 'username', 'username_validator', 'validate_unique']
+                        -> 여러 값들 중 <<<_set>>> 값이 있음: room_set, review_set, reservation_set 등, ForeignKey로 User에 연결된 Models의 'name of the model'_set 가 있음
+                    
+                    _set:
+                        *** ForeginKey를 만들면, ForeginKey의 타겟이 되는 것(여기서는 User)에는 타겟과 ForeginKey로 연결된 것의 'name of the model'_set 이 생김
+                            -> 'name of the model'_set : elements(타겟)가 ForeginKey에 접근할 수 있는 방법
+                                ex) tal.room_set.all(): <QuerySet [<Room: Jun's House>]>
+
+                            -> """related_name"""을 통해 접근 방법을 room_set이 아니라 다른 식으로 바꿀수 있다. (room_set -> rooms 추천)
+                                -> ex) host = models.ForeginKey("users.User", related_name="rooms", on_delete=models.CASCADE)
+                                            -> 호출할 때 tal.room_set.all() 하던 것을 tal.rooms.all()로 변경
+                                model명 + 복수형으로 바꾸는 이유: (아마) ManyTomManyField 등과 함께 쓸때 naming 때문에 헷갈리지 않게 하기 위해?
+
+                    from rooms.models import Room
+                    room = Room.objects.get(id=1) (id 대신 pk 도 가능)
+                    room: <Room: Jun's House>
+                    room.review_set: <django.db.models.fields.related_descriptors.create_reverse_many_to_one_manager.<locals>.RelatedManager object at 0x0000020EF6193D90>
+                    room.review_set.all(): <QuerySet []>
+
+                    ex) startswith filter
+                    startswith = User.objects.filter(username__startswith="ta")
+                    startswith: <QuerySet [<User: taltal>]>
+
+                    (강의 #7.3) 
+                    class Room에 photo와 관련된 것이 없지만 
+                    class Photo에 room에 연결한 ForeginKey가 있기 때문에
+                    Roomadmin에서 Room을 photo와 관련된 것을 가진것 처럼 쓸 수 있다.
+                        @admin.register(models.Room)
+                        class RoomAdmin(admin.ModelAdmin):
+                            def count_photos(self, obj):
+                            return obj.photos.count()
+                            --> photos는 원래는 photo_set (return obj.photo_set.count()) 였는데 related_name으로 photos로 변경된 것임을 기억하자
+
+
+            ManyToMany
+                Amenity에서, Amenity를 쓰고 있는 Room 가져오기
+                    from rooms.models import Amenity
+                    Amenity.objects.all(): <QuerySet [<Amenity: alarm>, <Amenity: phone>]>
+                    a = Amenity.objects.get(id=1)
+                    a.room_set: <django.db.models.fields.related_descriptors.create_forward_many_to_many_manager.<locals>.ManyRelatedManager object at 0x0000020EF61A5D00>
+                    a.room_set.all(): <QuerySet [<Room: Jun's House>]>
+                    -> 얘도 편의를 위해서 related_name = "rooms"로 변경해주자
+
+# 파일 업로드 (사진) 
+    1) MEDIA_ROOT : Django에게 우리가 업로드한 파일들을 어디에 써야할지 알려준다 (강의 #8.3)
+        config/settings.py에 MEDIA_ROOT 설정 (저장)
+            * import os 를 해주고, settings.py에 있는 BASE_DIR와 os.path.join 을 이용해서 경로를 만들어준다
+            os.path.join(BASE_DIR, "upload")를 MEDIA_ROOT에 넣어줌 : BASE_DIR 와 "upload"를 합쳐서 경로를 만들어줌
+            MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+        -> 이렇게 하면 uploads에 내부 폴더 생성하고 파일 저장을 해주긴 하나, 아직 admin페이지에서는 열리지 않는 상태임
+    2) MEDIA_URL (URL: 찾기) (강의 #8.4)
+        MEDIA_URL: URL that handles the media served from MEDIA_ROOT
+        setting.py에 MEDIA_URL 설정
+        MEDIA_ROOT로 만들어진 폴더 내의 파일을 다룬다
+        * MEDIA_ROOT가 가르키는 폴더명이 url에 안들어가도 무방하다는 것을 유의(표현 될때도 폴더명은 상관 없음)
+        MEDIA_ROOT = "media/" 로 설정해주고 User의 사진 링크주소를 보면 상대경로를 보여준다 그래서
+        MEDIA_ROOT = "/media/"로 설정 해주어야 한다고 함. (root 표시 해주어야 root에 바로 붙어서 media/~ 로 url 표현)
+    3) 불러오기
+        - config/urls.py에다가 settings를 import 해주어야 한다. 
+            근데 이때 from . import settings 로 import 해주는 것이 아니라
+            from django.conf import settings 로 import 해줘야 한다. 
+            또한 from django.conf.urls.static import static 해준다:  static 파일들을 제공하는 걸 돕는다
+                static: 정적 파일 관리하기(e.g. 이미지, 자바스크립트, CSS) (https://docs.djangoproject.com/ko/3.1/howto/static-files/#serving-static-files-during-development)
+                개발중에 사용자가 업로드한 파일을 제공하는 기능 (개발환경일때만 해당 파일을 사용하도록(production 환경일때는 아마존 서버 등을 이용하기 위해))
+                    1. 《django.contrib.static files》가 다음 설정에 포함되도록 하십시오. INSTALLED_APPS.
+                    2. 설정 파일에서 다음을 정의합니다.:setting:STATIC_URL, 예를 들어:
+                            STATIC_URL = '/static/'
+                            ... 사이트 가서 더 보기
+                               
+                if settings.DEBUG:
+                    urlpatterns += static(settings.MEDIA_URL, document_root=MEDIA_ROOT)  해주면 된다...
+    4) html 구문 작업 (admin 화면에 보여주기)
+        (강의 # 8.5)
+        Photo Admin
+        Photo Admin에서 get_thumbnail(self,obj):에서
+        print(dir(obj.file))을 통해서 이용 가능한 많으 것을 얻을 수 있다.(ex: url, path, height...)
+        사진의 이미지를 나타내기 위해서 아래와 같이 한다.
+            def get_thumbnail(self, obj):
+                return f'< img src = "{obj.file.url}" / >'
+        그런데 보안문제 때문에 이런 html 구문을 쓰기 위해서는 기능을 호출해야 한다.  : from django.utils.html import mark_safe
+        그리고 mark_safe()를 해주어야 함
+            def get_thumbnail(self, obj):
+                    return mark_safe(f'< img src = "{obj.file.url}" / >')
+
+
+# Urls and views
+    (강의 # 10.0)
+    config/urls.py의
+    urlpatterns = [path("admin/", admin.site.urls)] 
+    ** url은 config/urls.py 의 urlpatterns에 기록해야 하는데, 양이 많아지니, 각 application 내부에 urls.py를 만들어서 import 해주는 식으로 처리 **
+        강의에서는 만들어줄 url에 해당하는 폴더가 있으면 그 폴더에 urls.py를 만들어주고, 그게 없으면 core에 urls.py 생성 (from django.urls import path)
+    - "admin/" : url (내가 부여하는 주소)
+    - admin.site.urls: view (어디서 가져올지 경로 지정)
+        view는 function임, 이 function을 views에 넣어서 실행시킬 것임
+        - rooms/views.py에 view(즉, function)을 만들고
+        - config/urls.py에서 view를 import 해주기 
+            -> include 를 이용해서 import
+               1) config/urls.py에 from django.urls import path 에 include 추가 (from django.urls import path, include)
+               2) path("", include("core.urls"))를 urlpatterns에 추가
+    - ex) core/urls.py        
+            from django.urls import path
+            from rooms import views as room_views
+
+            urlpatterns = [path("", room_views.all_rooms, name=),]
+    
+        config/urls.py
+            from django.contrib import admin
+            from django.urls import path, include
+            from django.conf import settings
+            from django.conf.urls.static import static
+
+            urlpatterns = [
+                path("", include("core.urls", namespace="core")),
+                path('admin/', admin.site.urls),
+            ]
+
+        core/urls.py에서
+        "": url 지정
+        room_views.all_rooms: 경로 지정
+        name= : view의 이름 지정
+
+        config/urls.py에서
+        include: 다른 곳에서 url import 하는 방법
+
+        name & namespace
+            name: core/urls.py의 urlpatterns에 넣어주었고
+            namespace: config/urls.py의 urlpatterns의 include 안에 추가
+                namespace를 쓰기 위해, include로 import 해줄 urls.py 안에 app_name 지정: 
+                    < include, namespace -> config/urls.py에 // name, appname -> core/urls.py or rooms/urls.py 등 >
+                        -> namespace 와 app_name 은 같아야 함 (ex: namespace="core", app_name="core")
+                (django.core.exceptions.ImproperlyConfigured: Specifying a namespace in include() without providing an app_name is not supported. 
+                Set the app_name attribute in the included module, or pass a 2-tuple containing the list of patterns and app_name instead.)
+
+    
+# View(강의 #10.2): 뷰는 그 Url로 들어갈 때마다 HTTP Request를 생성한다
+            그리고 그 request에 응답해주는것이 브라우저가 돌아가는 방법이다 (HTTP에 있는 기능임 - Django가 아니라)
+            어떻게 응답해주느냐? HttpResponse로!!
+            rooms/views.py에 
+            
+            from django.http import HttpResponse
+            
+            def all_rooms(request):
+                return HttpResponse(content="hello")
+            
+            -> request에 HttpResponse로 반응 해주는 것!
+            
+                HttpResponse 대신에 render 사용 가능
+        
+        ** render, Django Templates ** 
+            ex)
+            from django.shortcuts import render
+
+            def all_rooms(request):
+                return render(request, template_name, context=None, content_type=None, status=None, using=None)
+            
+            render를 쓰기 위해서는 templates 폴더를 생성(naming 변경 불가)
+            -> config/settings.py에 TEMPLATES.DIRS에 경로 지정: os.path.join(BASE_DIR, "templates"): 아래와 같이 해주어야 browser가 template 찾아서 render 할 수 있음
+                        TEMPLATES = [
+                            {
+                                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                                'DIRS': [os.path.join(BASE_DIR, "templates")],
+                                'APP_DIRS': True,
+                                'OPTIONS': {
+                                    'context_processors': [
+                                        'django.template.context_processors.debug',
+                                        'django.template.context_processors.request',
+                                        'django.contrib.auth.context_processors.auth',
+                                        'django.contrib.messages.context_processors.messages',
+                                    ],
+                                },
+                            },
+                        ]
+
+            context: python 변수를 html로 보내주는 것: context={"a": b, "a": b, ...} (dictionary 형태)
+                -> "a": b --> a에는 template에서 불려질 name, b는 변수명
+                해당하는 template(html)에 가서 {{a}} 입력해주면 됨 
+
+
+# HTML (강의 #10.3, #10.4)
+
+    extends: html에서 html 불러오기(확장하기) 
+        ex) base.html: 여러 곳에서 반복해서 쓰일 기초되는 html
+            home.html에서 base.html을 토대로 쓰려면 home.html에 {% extends 'base.html' %} 해준다
+
+            block: 
+                extends를 했다면, extends를 한 것이 어디에 위치하는지를 설정해주어야 한다. block이 그 기능을 수행
+                base.html에 원하는 곳에 {% block 'name' %}{% endblock 'name' %}  (endblock에 'name' 없어도 되나 쓰면 찾기에 좋은 듯)
+                base.html을 사용하려는 곳에 (ex- home.html) {% block 'name' %} 내용입력 {% endblock 'name'}
+            
+            include:
+                block은 html 전체가 아닌 부분의 내용을 넣는 방법이고,
+                html 내용을 통으로 넣는 방법이 include 
+                -> {% include '경로' %} (ex- templetes/partials/footer.html을 가져오고자 하는 경우: {% include 'partials/footer.html' %})
+                    
+
+# command 만들기 (강의 #9.0)
+    1) 해당 application(폴더) 안에 management 폴더 생성 -> __init__.py  생성 / commands 폴더 생성 -> commands 안에도 __init__.py 생성
+    2) commands 폴더 안에 실행시키려는 파일 만들기 (ex. loveyou.py)
+    3) 목적: python manage.py loveyou --times 50
+        -> rooms(즉, application)/management/commands/loveyou.py 를 만들고, 실행하는 것은
+            python manage.py loveyou 로 하면 되는 것을 알수 있다(명령어에 추가적인 경로 필요 없이)
+    4) python manage.py loveyou 실행해보기 -> AttributeError: module 'rooms.management.commands.loveyou' has no attribute 'Command' 
+                                                -> class Command 가 필요하다는 의미
+    5) loveyou.py에 아래와 같이 입력하고 python manage.py loveyou 재실행
+        class Command:
+            print("hello")
+        -> AttributeError: 'Command' object has no attribute 'run_from_argv'
+            -> from django.core.management.base import BaseCommand 해주고 다시
+                -> NotImplementedError: subclasses of BaseCommand must provide a handle() method
+                    ->  def handle(self, *args, **options): handle 정의해준다
+                            print(args, options) 해주고 python manage.py loveyou --times 50 입력하면 아래와 같이 출력
+                            () {'verbosity': 1, 'settings': None, 'pythonpath': None, 'traceback': False, 'no_color': False, 'force_color': False, 'skip_checks': False, 'times': '50'}
+                            즉, args는 비어있고, options는 verbosity, settings 등이 들어가있는 dictionary임 / times에 50이라는 값이 들어감
+                                ->아래와 같이 입력하고 python manage.py loveyou -times 50 다시 입력하면 command 실행  
+                                        def handle(self, *args, **options):
+                                            times = options.get("times")
+                                            for t in range(0, int(times)):
+                                                print(t+1, "I Love you")
+
+                                                print 대신에 self.stdout.write(self.style.SUCCESS(f"{t+1} I love you"))
+
+    *) 실행시킬 argument 추가
+        def add_arguments(self, parse):
+            parser.add_argument("--something") or parser.add_argument("--something", help="blah blah~") or   
+        python manage.py --sometging some -> some에 값 입력 
+
+# seed_.py 만들기
+    - seed_.py 순서: seed_amenities.py
+
+    명령어: python manage.py seed_amenities
+
+    # 9.4
+    django_seed는 primary key array를 return 해준다
+    seed_rooms.py에 사진 파일 뿌려주는 작업중인데,
+    seed.execute를 저장해서 values 값 얻어주면 dict_values가 나와서 이를 list화 해주고 list(seed.execute().values)
+    list 안에 list 로 들어가는 꼴이기 때문에 이를 django utils 중 flatten을 이용해서 하나의 list로 만든다 (2중 리스트를 flatten)
+        from django.contrib.admin.utils import flatten (설명: https://blog.winterjung.dev/2017/04/21/list-of-lists-to-flatten)
+            flatten(list(seed.execute().values()))
+
+
+# fake data 만들기 : django_seed
+    1) pipenv install django_seed

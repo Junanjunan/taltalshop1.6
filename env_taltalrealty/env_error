@@ -1,0 +1,241 @@
+aws deploy error
+    (.ebextensions)
+        option_settings:
+        aws:elasticbeanstalk:container:python:
+            WSGIPath: config/wsgi.py
+    
+    - 위에까지 하고 eb deploy를 하면, html파일들 뜨고, html 사이에 link로 이동까진 가능
+    - but, signup, login, 등등 기능은 작동 x
+
+    아래와 같이 aws에 migrate를 해줘야 한다는데, 
+        container_commands:
+        01_migrate:
+            command: "django-admin migrate"
+            leader_only: true
+        option_settings:
+        aws:elasticbeanstalk:container:python:
+            WSGIPath: config/wsgi.py
+        aws:elasticbeanstalk:application:environment:
+            DJANGO_SETTINGS_MODULE: config.settings
+    다음과 같이 오류 발생(eb logs --all)
+            [2021-02-27T07:53:46.332Z] INFO  [3244]  - [Application update app-16bd-210227_165043@17/AppDeployStage0/EbExtensionPostBuild/Infra-EmbeddedPostBuild/postbuild_0_new_taltal_realty/Command 01_migrate] : Activity execution failed, because: Traceback (most recent call last):
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/base/base.py", line 219, in ensure_connection
+            self.connect()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/utils/asyncio.py", line 26, in inner
+            return func(*args, **kwargs)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/base/base.py", line 200, in connect
+            self.connection = self.get_new_connection(conn_params)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/utils/asyncio.py", line 26, in inner
+            return func(*args, **kwargs)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/postgresql/base.py", line 187, in get_new_connection
+            connection = Database.connect(**conn_params)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/psycopg2/__init__.py", line 127, in connect
+            conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+        psycopg2.OperationalError: could not connect to server: Connection timed out
+        Is the server running on host "new-taltal-realty.cbmvgosaoiih.ap-northeast-2.rds.amazonaws.com" (172.31.18.198) and accepting
+        TCP/IP connections on port 5432?
+        
+        
+        The above exception was the direct cause of the following exception:
+        
+            Traceback (most recent call last):
+            File "/opt/python/run/venv/bin/django-admin", line 11, in <module>
+            sys.exit(execute_from_command_line())
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+            utility.execute()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/core/management/__init__.py", line 395, in execute
+            self.fetch_command(subcommand).run_from_argv(self.argv)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/core/management/base.py", line 330, in run_from_argv
+            self.execute(*args, **cmd_options)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/core/management/base.py", line 371, in execute
+            output = self.handle(*args, **options)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/core/management/base.py", line 85, in wrapped
+            res = handle_func(*args, **kwargs)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/core/management/commands/migrate.py", line 92, in handle
+            executor = MigrationExecutor(connection, self.migration_progress_callback)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/migrations/executor.py", line 18, in __init__
+            self.loader = MigrationLoader(self.connection)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/migrations/loader.py", line 53, in __init__
+            self.build_graph()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/migrations/loader.py", line 216, in build_graph
+            self.applied_migrations = recorder.applied_migrations()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/migrations/recorder.py", line 77, in applied_migrations
+            if self.has_table():
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/migrations/recorder.py", line 55, in has_table
+            with self.connection.cursor() as cursor:
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/utils/asyncio.py", line 26, in inner
+            return func(*args, **kwargs)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/base/base.py", line 259, in cursor
+            return self._cursor()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/base/base.py", line 235, in _cursor
+            self.ensure_connection()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/utils/asyncio.py", line 26, in inner
+            return func(*args, **kwargs)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/base/base.py", line 219, in ensure_connection
+            self.connect()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/utils.py", line 90, in __exit__
+            raise dj_exc_value.with_traceback(traceback) from exc_value
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/base/base.py", line 219, in ensure_connection
+            self.connect()
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/utils/asyncio.py", line 26, in inner
+            return func(*args, **kwargs)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/base/base.py", line 200, in connect
+            self.connection = self.get_new_connection(conn_params)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/utils/asyncio.py", line 26, in inner
+            return func(*args, **kwargs)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/django/db/backends/postgresql/base.py", line 187, in get_new_connection
+            connection = Database.connect(**conn_params)
+            File "/opt/python/run/venv/local/lib64/python3.6/site-packages/psycopg2/__init__.py", line 127, in connect
+            conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+        django.db.utils.OperationalError: could not connect to server: Connection timed out
+        Is the server running on host "new-taltal-realty.cbmvgosaoiih.ap-northeast-2.rds.amazonaws.com" (172.31.18.198) and accepting
+        TCP/IP connections on port 5432?
+        
+        (ElasticBeanstalk::ExternalInvocationError)
+
+    우선, documentation을 봐보자 https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html
+        pgadmin or psql
+        -> pgadmin을 설치했음
+            RDS endpoint
+
+    -> vpc보안그룹 인바운드에 모든것에 대해서 장소 상관 없이 다 받는걸로했더니 다른 Error로 전환
+        conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+        psycopg2.OperationalError: FATAL:  database "new-taltal-realty" does not exist
+                
+        The above exception was the direct cause of the following exception:
+
+        File "/opt/python/run/venv/local/lib64/python3.6/site-packages/psycopg2/__init__.py", line 127, in connect
+        conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+        django.db.utils.OperationalError: FATAL:  database "new-taltal-realty" does not exist
+        
+        (ElasticBeanstalk::ExternalInvocationError)
+    
+    ====>> Elastic Beanstalk에서 구성 중에서 RDS_NAME, RDS_USER를 모두 postgres로 하면 된다.
+
+
+    -------------------------
+    강의 26.5 댓글을 보면 이런 설명이 있음
+    강의 진행하면서 RDS를 생성하고도 Error – FATAL: database name does not exist 뜨시면 DATABASE가 생성이 안 되서 그래요. RDS와 DB는 달라요. RDS 인스턴스를 생성하면 그 안에 또 DB를 생성해줘야 해요. ssh로 접속해야 하는데, 초기에 강의에서 eb init을 할 때 ssh 설정을 안 했을 거에요. 다시 eb init를 해서 ssh 설정을 해가지고 파이을 만들어야 해요. terminal(git bash 등으로)로
+    $ ssh -i ec2-user@ [이 부분은 EC2에서 해당 인스턴스 체크 후 연결을 누르고 ssh를 누르면 방법이 나옵니다.]
+    ssh로 서버에 접속을 했으면,
+    $ psql -h -p 5432 --username --dbname postgres
+    dbname은 무조건 postgres로 해줘야 postgres cli가 생깁니다. postgres는 default db에요 명령어가 성공하면, postgres=> 모양이 나옵니다. 여기서
+    postgres=> CREATE DATABASE ;
+    postgres=> \l (이거 소문자 엘 db list 보여줌)
+    그리고 eb deploy를 하면 됩니다.
+
+    id_rsa가 필요한듯 함 : https://git-scm.com/book/ko/v2/Git-%EC%84%9C%EB%B2%84-SSH-%EA%B3%B5%EA%B0%9C%ED%82%A4-%EB%A7%8C%EB%93%A4%EA%B8%B0
+
+    (taltal_realty_re-nOVOxIh_) C:\Users\User\Desktop\taltal_realty_re>ssh-keygen
+    Generating public/private rsa key pair.
+    Enter file in which to save the key (C:\Users\User/.ssh/id_rsa):
+    (taltal_realty_re-nOVOxIh_) C:\Users\User\Desktop\taltal_realty_re>
+    (taltal_realty_re-nOVOxIh_) C:\Users\User\Desktop\taltal_realty_re>ssh-keygen
+    Generating public/private rsa key pair.
+    Enter file in which to save the key (C:\Users\User/.ssh/id_rsa):
+    Enter passphrase (empty for no passphrase):
+    Enter same passphrase again:
+    Your identification has been saved in C:\Users\User/.ssh/id_rsa.
+    Your public key has been saved in C:\Users\User/.ssh/id_rsa.pub.
+    The key fingerprint is:
+    SHA256:/Iwre/ZVTF1DsE2gAQMMVODerPedtxz5kZZr5xEpD7o user@DESKTOP-1L9GT7J
+    The key's randomart image is:
+    +---[RSA 2048]----+
+    |    .+=o.o.. o++.|
+    |    .  .  . o +.o|
+    |     .     . ....|
+    |    . o.     o  .|
+    |     . oS    ooo |
+    |      .  +  ..= +|
+    |     . .. o..o B |
+    |      o +...+.+.=|
+    |      .=.o.E.oo+o|
+    +----[SHA256]-----+
+
+
+    위에서 ssh-keygen 으로 생성해준 id_rsa.pub를 
+    EC2에 Key-pair import 해줌(이름을 id_rsa로 했음)
+    ElasticBeanstalk 에서 구성(configuration)에서 EC2 Key-pair에 EC2에 등록해준 key-pair 등록해줌
+    
+    명령어에 ssh -i "id_rsa.pem" ec2-user@ec2-3-36-76-35.ap-northeast-2.compute.amazonaws.com 해주면(ssh -i "id_rsa.pem" username/public rds) 아래와 같이 실행됨
+
+    (taltal_realty_re-nOVOxIh_) C:\Users\User\Desktop\taltal_realty_re>ssh -i "id_rsa.pem" ec2-user@ec2-54-180-123-211.ap-northeast-2.compute.amazonaws.com
+    Warning: Identity file id_rsa.pem not accessible: No such file or directory.
+    The authenticity of host 'ec2-54-180-123-211.ap-northeast-2.compute.amazonaws.com (54.180.123.211)' can't be established.
+    ECDSA key fingerprint is SHA256:tJs96YjAehxQUB/tTdnoMhU+R1z+cyV3hEQqfdE/AOA.
+    Are you sure you want to continue connecting (yes/no)? yes
+    
+    Warning: Permanently added 'ec2-54-180-123-211.ap-northeast-2.compute.amazonaws.com,54.180.123.211' (ECDSA) to the list of known hosts.
+    _____ _           _   _      ____                       _        _ _
+    | ____| | __ _ ___| |_(_) ___| __ )  ___  __ _ _ __  ___| |_ __ _| | | __
+    |  _| | |/ _` / __| __| |/ __|  _ \ / _ \/ _` | '_ \/ __| __/ _` | | |/ /
+    | |___| | (_| \__ \ |_| | (__| |_) |  __/ (_| | | | \__ \ || (_| | |   <
+    |_____|_|\__,_|___/\__|_|\___|____/ \___|\__,_|_| |_|___/\__\__,_|_|_|\_\
+                                        Amazon Linux AMI
+
+    This EC2 instance is managed by AWS Elastic Beanstalk. Changes made via SSH
+    WILL BE LOST if the instance is replaced by auto-scaling. For more information
+    on customizing your Elastic Beanstalk environment, see our documentation here:
+    http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customize-containers-ec2.html
+    [ec2-user@ip-172-31-42-107 ~]$ 
+
+    ECDSA key fingerprint is SHA256:tJs96YjAehxQUB/tTdnoMhU+R1z+cyV3hEQqfdE/AOA. 이렇게 나온거 일단 기록
+
+
+    https://forums.aws.amazon.com/thread.jspa?threadID=287328
+    psql -h <your RDS PostgreSQL end point> -p 5432 --username <master user> -d <db name>
+    위 사이트에 저렇게 나와있는데
+    psql -h taltal-realty.cbmvgosaoiih.ap-northeast-2.rds.amazonaws.com -p 5432 --username postgres 까지만 쳐도 비밀번호 입력하라 그러고 제대로 입력하면
+    postgres =>   이렇게 진행됨
+
+    ** migrate 최종 해결 **
+        container_commands:
+        01_migrate:
+            command: "django-admin migrate"
+            leader_only: true
+        option_settings:
+        aws:elasticbeanstalk:container:python:
+            WSGIPath: config/wsgi.py
+        aws:elasticbeanstalk:application:environment:
+            DJANGO_SETTINGS_MODULE: config.settings
+
+    psycopg2.OperationalError: FATAL:  database "new-taltal-realty" does not exist 라고 해서
+    결국 "new-taltal-realty"라는 데이터베이스를 생성해주었고, 우선은 해결되었음.
+
+
+    * 간단히 정리해보면...
+        timed out error : 외부에서 접근을 막아서 그런 것 같아서 inbound 규칙 모조리 추가 - 필요한게 뭔지 필터링 필요
+        no database "name" error: "name"에 해당하는 database를 만들어버리면 되는 듯 - pgadmin, psql 등 있는데, pgadmin 이용했음
+        ssh(일종의 보안키): (우선 이걸 이용할 필요가 없었던 것 같긴 하지만..) 나는 git이 설치되어 있으므로(?) windows임에도 console에서 ssh-keygen으로 id_rsa - 프라이빗키, 퍼블릭키 생성 가능했음
+            -> EC2에 key-pair에 id_rsa.pub 등록
+            -> Elastic Beanstalk에도 EC2에서 만들어준 id_rsa 등록
+        ssh 서버 접근하는 방법: ssh -i "id_rsa.pem" ec2-user@ec2-54-180-123-211.ap-northeast-2.compute.amazonaws.com
+        psql -h <your RDS PostgreSQL end point> -p 5432 --username <master user> -d <db name> 해서 psql로 할 수 있는 것 같은데, 실제로 이용한 건 없었음
+        
+
+    - pip Error
+        You are using pip version 9.0.1, however version 20.2.2 is available.
+        You should consider upgrading via the 'pip install --upgrade pip' command.
+
+        "eb deploy" 실행에서 위의 에러가 발생하신 분들은 서버의 리눅스에 설치된 파이썬의 pip 버전이 낮아 생기는 문제입니다.
+        '.ebextensions' -> '02-django.config' 에서03_createsu 부분을 다음과 같이 변경하시면 deploy가 정상적으로 작동할 겁니다!
+
+        03_upgrade-pip:
+        command: "pip install --upgrade pip"
+
+    - Error: psycopg2.errors.DuplicateColumn: column "realtor_id" of relation "books_storelease" already exists
+
+      Answer:  container_commands:
+                 01_migrate:
+                   command: "django-admin migrate --fake"
+                   leader_only: true
+
+                -> 그냥 migrate 말고 migrate --fake 해주면 해결. db에 column이 이미 존재한다면 override를 할 수 없기 때문에 이렇게 해주어야 한다고 함. 지우면 되는가 싶은데 지울줄을 모르겠음...
+                -> 한번 이렇게 해서 된 후에는 --fake 지우고 원래대로 해도 deploy 되었음
+
+        https://www.codegrepper.com/code-examples/whatever/django.db.utils.ProgrammingError%3A+column+%22column%22+of+relation+%22%22+already+exists 참고
+    
+
+    - [ERROR] Command 02_collectstatic (source /var/app/venv/*/bin/activate ; cd /var/app/staging ; python manage.py collectstatic --noinput) failed 
+      botocore.exceptions.ClientError: An error occurred (AccessDenied) when calling the PutObject operation: Access Denied 
+        -> s3 퍼블릭 액세스 차단 활성화 되어있어서 안되었음. 주의

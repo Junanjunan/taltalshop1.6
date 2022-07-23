@@ -44,10 +44,14 @@ Django_APPS = [
 ]
 
 PROJECT_APPS = [
+    "core.apps.CoreConfig",
+    "home.apps.HomeConfig",
     "users.apps.UsersConfig",
     "items.apps.ItemsConfig",
     "payments.apps.PaymentsConfig",
     "reviews.apps.ReviewsConfig",
+    "deliveries.apps.DeliveriesConfig",
+    "superuser.apps.SuperuserConfig",
 ]
 
 THIRD_PARTY_APPS = [

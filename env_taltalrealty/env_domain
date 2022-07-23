@@ -1,0 +1,10 @@
+모든 도메인 설정 해줬는데 안되는 이유... nginx 설정을 해주지 않아서인것 같은데,
+
+1. https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/java-tomcat-proxy.html?icmpid=docs_elasticbeanstalk_console
+2. https://nerogarret.tistory.com/51
+
+위의 두 사이트를 이용해서 nginx에 관한 설정을 .ebextensions에 포함해보려고 했는데, 여전히 안되는 걸로 보아 잘못 한듯
+
+
+uWSGI, nginx 에 대해서 공부가 필요할 듯.....
+nginx는 windows에서는 안되고 ubuntu? linux? 에서만 가능하다는 것 같음....

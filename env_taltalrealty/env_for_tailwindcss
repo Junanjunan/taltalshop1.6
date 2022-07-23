@@ -1,0 +1,85 @@
+# 강의 19.0
+    tailwind css : extension 에서 tailwind css intellisense 설치 (자동 완성 기능)
+
+# 강의 19.1
+    1. console창에서  npm init 실행 (이를 위해서는 node.js와 gulp 12.13.0 버전이 설치돼 있어야 함) - 그냥 다 ok
+        -> package.json 생성 : 지울것 : main, scripts, author, license, bugs -> 왜 지우지..?
+    2. npm i gulp gulp-postcss gulp-sass gulp-csso node-sass -D  (-D:developer로서 설치)
+            - 설치 오류가 생기는 듯... npm i ~ 각각 설치해줘야 할 듯
+            - .gitignore에 node_modules 추가    
+    3. npm install tailwindcss -D
+    4. npx tailwind init : tailwind.config.js 생성
+        혹시 이런 에러 나시는 분들 계시면.. :
+
+        C:\Users\david\Desktop\airbnb-clone>npx tailwind init
+        internal/modules/cjs/loader.js:797
+        throw err;
+        ^
+
+        Error: Cannot find module 'autoprefixer'
+
+        → 해결 방법 (다음 커맨드 입력해주세요) :
+        npm uninstall tailwindcss postcss autoprefixer
+
+        npm install tailwindcss@latest postcss@latest autoprefixer@latest
+        (npm install tailwindcss@latest / npminstall postcss@latest / npminstall autoprefixer@latest 각각 했음)
+
+        --> 위 두 줄 해주고 npx tailwind init 다시 실행
+
+    5. 최 상단에 gulpfile.js 생성
+
+    6. (gulpfile.js)
+        const gulp = require("gulp")
+
+        const css = () => {
+            const postCSS = require("gulp-postcss");
+            const sass = require("gulp-sass");
+            const minify = require("gulp-csso");
+            sass.compiler = require("node-sass");
+            return gulp.src("assets/scss/styles.scss").pipe(sass().on("error", sass.logError)).pipe(postCSS([
+                require("tailwindcss"),
+                require("autoprefixer"),
+            ]))
+            .pipe(minify())
+            .pipe(gulp.dest("static/css"))
+        };
+
+        exports.default = css;
+
+    
+    * npm i autoprefixer -D : 위에 오류 생겼을 때 설치 했다면 이건 안해줘도 될 듯
+
+
+    7. assets/scss/styles.scss 생성
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+    8. (package.json)
+        "scripts": {
+            "css": "gulp"
+        }
+        를 입력하고 npm run css 실행해서 테스트 해보자
+        -> static/css/styles.css 생성되어야 함
+
+    9. assets/scss/styles.scss 에 적용할 css 코드 작성해주고, 적용 시키려면
+        npm run css 해줘야 함
+
+    10. (config/settings.py)
+        STATICFILES_DIRS =  [os.path.join(BASE_DIR, "static")]          # static url에 접근했을때 보여질 파일들의 경로 / STATIC_URL 밑에 써주도록 하자
+   
+    11. base.html에 가서
+        <head>
+        <link rel="stylesheet" href="http://도메인/static/css/styles.css">
+        </head>
+        
+        적용하면 되는데.. 이를 변동없는 url로 바꾸자 - load static을 해주어야 함
+        
+        {% load static %}
+        <head>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        </head>
+
+# 강의 20.3
+    1. scss 수정하고 npm run css 해도 변경사항이 적용 안될 경우
+     - 캐시 등 인터넷 기록 삭제하고 해보기

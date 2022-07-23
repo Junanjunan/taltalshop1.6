@@ -1,0 +1,110 @@
+Github Login Documents: https://docs.github.com/en/developers/apps/authorizing-oauth-apps
+
+** 사전 작업 - model/admin 만들기 **
+(users/models.py/User)
+    LOGIN_EMAIL = "email"
+    LOGIN_GITHUB = "github"
+    LOGIN_KAKAO = "kakao"
+    LOGIN_CHOICES = ((LOGIN_EMAIL, "Email"), (LOGIN_GITHUB, "Github"), (LOGIN_KAKAO, "Kakao"))
+
+    login_method = models.CharField(max_length=50, choices=LOGIN_CHOICES, default=LOGIN_EMAIL)
+    (and migrate)
+
+
+(users/admin.py/CustomUserADmin)
+    fieldsets = UserAdmin.fieldsets + (("Custom Prifile", {"fields":("login_method","bio"),}),)
+    list_display=("login_method",)
+
+** 설치: pipenv install requests - POST request를 보낼 때 사용 : requests.post(~~,headers~) **
+
+
+
+1. template 생성
+    (1) templates/partials/social_login.html 생성
+        <div>
+            <a href="{% url 'users:github-login' %}">
+                Continue With Github
+            </a>
+        </div>
+
+    (2) 기존 login.html, sign.html에 include
+        (templates/users/login.html) and (templates/users/signup.html)
+            {% include 'partials/social_login.html' %}
+
+
+2. 함수 생성(pass 하고 넘어가기-url 지정 해준 후 다시 작업)
+    (1) (users/views.py)
+            def github_login(request):
+                pass
+    (2) (users.views.py)
+            def github_callback(request):
+                pass
+
+3. url 지정
+    (1) (users/urls.py)
+            urlpatterns = [
+                path("login/github", views.github_login, name="github-login"),
+                path("login/github/callback", views.github_callback, name="github-callback"),
+            ]
+
+4. Github Oauth App 생성
+    (1) (github.com/my account/settings/Developer settings/OAuth apps/New Oauth App)
+            Application name: 알아서
+            Homepage URL: Homepage (ex: http://127.0.0.1:8000)
+            Authorization callback URL: view로 path 설정해준 url/callback (ex: http://127.0.0.1:8000/users/login/github/callback)
+    (2) Client Id / Client Secret .env에 저장 (GH_ID = ~ / GH_SECRET = ~)
+
+
+5. users/views.py 에서 전체적으로 진행
+    (1) def github_login 정리 
+            import os
+
+            def github_login(request):
+                client_id = os.environ.get("GH_ID")
+                redirect_uri = "http://127.0.0.1:8000/users/login/github/callback" (view로 path 설정해준 url/callback)
+                return redirect(f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=read:user")
+            
+    (2) def github_callback 정리
+            import requests
+            from django.urls import reverse
+            
+            def github_callback(request):
+                client_id = os.environ.get("GH_ID")                 # print(request.GET) 하면 오류 뜬 url과 console에서 code 확인 가능
+                client_secret = os.environ.get("GH_SECRET")
+                code = request.GET.get("code")              
+                result = requests.post(                             # POST request 보내기 위해 pipenv install requests & import requests / settings.py에 추가는..??
+                    f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={client_secret}&code={code}",
+                    headers={"Accept":"application/json"},)
+                result_json = result.json()                         # print(result_json)을 해보면 access_token이 얻어지는 걸 확인 가능 : 10분 지나거나 재사용 불가, json: not found 로 나오면 새로고침 해서 다시 얻기
+                access_token = result_json.get("access_token")
+                profile_request = requests.get(                     # access_token으로 API 요청(?)
+                    "https://api.github.com/user",              
+                    headers={
+                        "Authorization":f"token {access_token}",
+                        "Accept":"application/json"})               # login, email, bio 등 값을 보기 위해서 json으로 얻어준다 ("Accept":"application/json")
+                profile_json = profile_request.json()               # print(profile_json) 해보면 login 값 등 나옴
+                email = profile_json.get("email")  
+                bio = profile_json.get("bio")
+                try:
+                    user = models.User.objects.get(email=email)     # email로 필터링 하는 과정
+                    if user.login_method != models.User.LOGIN_GITHUB:
+                        raise GithubException()                     # github로 얻어오는 username의 email이 github가 아닌 방법으로 가입이 되어 있다면 에러 발생시키기
+                except models.User.DoesNotExist:                    # github로 얻어오는 user의 email이 사용된 적이 없을시, 해당 github ID로 새계정 만들고 login 하기
+                    user = models.User.objects.create(
+                        username=email, email=email,                # django에서 username은 필수인데, email 값을 username에 넣어주는 것 
+                        bio=bio, login_method=models.User.LOGIN_GITHUB)
+                    user.set_unusable_password()                    # set_unusable_password()는 User(아마 여기서는 AbstractUser)의 내장 method: password 값이 비는 것을 막기 위해 사용
+                    user.save()
+                login(request,user)
+                return redirect(reverse("core:home"))               ### 각 단계에서 error 발생할 수 있음(json을 제대로 못가져 오는 등..) - 경우에 따라서 try나 if 구문 사용해서 오류 처리하기
+
+            
+            
+            * Error:
+                github profile에서 email을 private으로 해놓은 경우 인증이 안되는 경우 아래와 같이 (/user 에서 /user/emails 으로 수정) 하라고 하는데, 현재 해결 못한 상태  
+                
+                profile_request = requests.get(
+                    "https://api.github.com/user/emails",
+                    headers={
+                    "Authorization": f"token {access_token}",
+                    "Accept": "application/json"})

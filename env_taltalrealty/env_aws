@@ -1,0 +1,105 @@
+** 내가 아마존에 배포한 방식 **
+  순서 요약: 
+    pip3 install install awsebcli
+    eb init
+    eb create
+    pipenv install pipenv-to-requirements 해주고 pipenv lock -r > requirements.txt
+    RDS 생성
+    ElasticBeanstalk Configuration
+      DATABASE = {
+            "defult": {
+                "ENGINE": "django.db.backends.postgresql",
+                "HOST": os.environ.get("RDS_HOST"),                    # RDS/데이터베이스/Connectivity & security에 (연결&보안)있는 Endpoint 입력
+                "NAME": os.environ.get("RDS_NAME"),                    # 방금 만들었던 db 이름(DB 식별자) : "airbnb-clone" -> "postgres"로 해줘야 Error – FATAL: database name does not exist  해결됨!!!!!!! 
+                "USER": os.environ.get("RDS_USER"),                    # username에 있었던 것: "postgres"
+                "PASSWORD": os.environ.get("RDS_PASSWORD"),            # RDS에 등록한 비번
+                "PORT": "5432",                 # Connectivity & security에 있는 Port
+                
+            }
+        }
+    pgadmin에 RDS 등록  
+    보안그룹설정
+    S3 버킷 생성
+    
+
+  (.ebextensions/django.config)
+  option_settings:
+    aws:elasticbeanstalk:container:python:
+      WSGIPath: config.wsgi:application               # 강의에서는 config/wsgi.py 였으나 오류 발생 https://stackoverflow.com/questions/62049763/aws-elastic-beanstalk-wsgi-path-incorrect
+
+  eb init
+      Application Name: "air_bnb_clone_integrity"
+
+  eb create airbnb-clone 해주었음 : ERROR: ServiceError - Create environment operation is complete, but with errors. For more information, see troubleshooting documentation.
+  eb create 만 입력해도 default값 설정해줌
+
+  (여기서 확인?? https://ap-northeast-2.console.aws.amazon.com/elasticbeanstalk/home?region=ap-northeast-2#/application/overview?applicationName=air_bnb_clone_integrity : 좀 이상...)
+
+  EC2로 가서 실행중인 인스턴스 확인
+
+  Elastic Beanstalk 가서 사이트 열어보니 502 Bad Gateway라고 뜸
+
+  eb logs 확인해서 보니 pywin32, pypiwin32 뭐라고 하면서 에러가 발생해서, pipfile.lock이랑 requirements.txt에서 pywin32, pypiwin32 모두 삭제
+      - win 붙은건 window 환경에서 사용되는 것이고, aws 는 리눅스환경이라 삭제해주면 되는거라고 함..
+
+  PostgreSQL : 12.5.15-R1 선택했음 -> 9.6.15-R1 선택해서 재설치
+  비번: a52848625a
+
+  (requirements.txt)
+  psycopg2==2.8.6
+
+  eb deploy를 하니... 
+  2021/02/19 09:23:45.312888 [ERROR] An error occurred during execution of command [app-deploy] - [InstallDependency]. Stop running the command. Error: fail to install dependencies with requirements.txt file with error Command /bin/sh -c /var/app/venv/staging-LQM1lest/bin/pip install -r requirements.txt failed with error exit status 1. Stderr:ERROR: Could not find a version that satisfies the requirement psycopg==2.8.6
+  ERROR: No matching distribution found for psycopg==2.8.6
+
+  (.ebextensions/packages.config 생성)
+  packages:
+    yum:                        # 일종의 pip
+      postgresql-devel:[]       # 안되면 postgresql-devel96:[] 으로 
+
+
+  # 26.4부터 다시 실행하면 될 듯..
+
+
+  psycopg2.OperationalError: could not connect to server: Connection timed out
+  Is the server running on host "taltal-realty.cbmvgosaoiih.ap-northeast-2.rds.amazonaws.com" (172.31.45.17) and accepting
+  TCP/IP connections on port 5432?
+  
+  The above exception was the direct cause of the following exception:
+  
+  django.db.utils.OperationalError: could not connect to server: Connection timed out
+  Is the server running on host "taltal-realty.cbmvgosaoiih.ap-northeast-2.rds.amazonaws.com" (172.31.45.17) and accepting
+  TCP/IP connections on port 5432?
+  
+  (ElasticBeanstalk::ExternalInvocationError)
+
+  아래와 같은 오류가 발생
+
+  현재 진행중인 방법 : https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToPostgreSQLInstance.html
+
+  1) pgadmin 이용
+
+  2) pgadmin 연결 오류가 떴음 Error – Could not connect to server: Connection timed out
+    Make sure that the DB instance's public accessibility is set to Yes to allow external connections. To modify the Public access setting, see Modifying an Amazon RDS DB instance.
+    라길래, 체크했더니 No로 되어 있어서 Yes로 수정해주었음 - 여전히 안됨
+
+
+  * 서비스 종료: eb terminate / eb terminate --all
+
+
+
+
+  ******
+    Window pipenv에서 작업하시는 분들을 위해 아래 django-config code command부분 공유드립니다. 참고하세용
+      container_commands:
+      01_migrate:
+      command: "source /var/app/venv/*/bin/activate ; python manage.py migrate"
+      leader_only: true
+      02_collectstatic:
+      command: "source /var/app/venv/*/bin/activate ; cd /var/app/staging ; python manage.py collectstatic --noinput"
+      03_createsu:
+      command: "source /var/app/venv/*/bin/activate ; cd /var/app/staging ; python manage.py createsu"
+      leader_only: true
+
+
+보안그룹: 모든트래픽 열어주면 일단 됨. 이거보다 더 줄이는거는 더 파악 필요

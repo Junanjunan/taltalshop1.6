@@ -1,0 +1,315 @@
+# 8.3
+    MEDIA_ROOT : Django에게 우리가 업로드한 파일들을 어디에 써야할지 알려준다
+        1) config/settings.py에 경로지정 (저장)
+            MEDIA_ROOT 사용
+            * import os 를 해주고, settings.py에 있는 BASE_DIR와 os.path.join 을 이용해서 경로를 만들어준다
+            os.path.join(BASE_DIR, "upload")를 MEDIA_ROOT에 넣어줌 : BASE_DIR 와 "upload"를 합쳐서 경로를 만들어줌
+            MEDIA_ROOT = os.path.join(BASE_DIR, "uploads") -> 파일 업로드하면 uploads 폴더 생기고 그 안에 파일 첨부됨
+            (.gitignore 에 uploads/ 등록)
+        
+           *) ImageField : ImageField는 FileField에서 온 것임 (ImageField는 FileField 중 Image만을 위한 것임) (URL) 지정
+            이 필드 안에 upload_to""로 uploads 폴더 안의 어떤 폴더에다 photo를 업로드 할 것인지 정해줄 수 있다.
+
+# 8.5
+    Photo Admin
+    Photo Admin에서 get_thumbnail(self,obj):에서
+    print(dir(obj.file))을 통해서 이용 가능한 많으 것을 얻을 수 있다.(ex: url, path, height...)
+    사진의 이미지를 나타내기 위해서 아래와 같이 한다.
+        def get_thumbnail(self, obj):
+            return f'< img src = "{obj.file.url}" / >'
+    그런데 보안문제 때문에 이런 html 구문을 쓰기 위해서는 기능을 호출해야 한다.  : from django.utils.html import mark_safe
+    그리고 mark_safe()를 해주어야 함
+        def get_thumbnail(self, obj):
+                return mark_safe(f'< img src = "{obj.file.url}" / >')
+
+
+# 20.5    
+    (3) django에서 div 안에 image를 넣는 방법
+        <div style="background-image: url({{room.first_photo}});"></div>
+        (이게 맞는것 같은데 tailwindcss 일지도 모르니 테스트 필요)
+
+
+# 23.1
+
+-이제 사진 업로드를 해보자
+
+(rooms/views.py/EditRoomView)
+
+class RoomPhotosView(user_mixins.LoggedInOnlyView, DetailView):       
+    
+    model = models.Room
+    template_name = "room_photos.html"
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:                        
+            raise Http404()
+        return roomrgs):
+
+
+(rooms/urls.py)
+    path("<int:pk/photos", views.RoomPhotosView.as_view(), name="photos")
+
+
+(templates/rooms/room_edit.html)
+  
+        <a href="{% url 'rooms:photos' room.pk %}" >Edit Photos</a>
+
+
+(templates/rooms/room_photos.html 생성)
+
+    <div>
+        {% for photo in room.photos.all %}
+            <div>
+            <img src="{{photo.file.url}}" />
+            <span>{{photo.caption}}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+# 23.3
+Delete Photo
+
+(rooms/views.py)
+from django.contrib.auth.decorators import login_required
+
+@login_required                                                 #login_required() : If the user isn't logged in, redirect to settings.LOGIN_URL
+def delete_photo(request):
+
+
+(config/settings.py)
+
+# Authentication
+LOGIN_URL = "/users/login/"
+
+
+(rooms/views.py)
+from django.contrib.auth.decorators import login_required
+
+@login_required                                                 
+def delete_photo(request):
+    pass
+
+
+(rooms/urls.py)
+path("<int:room_pk>/photos/<int:photo_pk>/delete/", views.delete_photo, name="delete-photo")
+
+
+(rooms/views.py)
+from django.shortcuts import redirect, reverse
+from django.contrib.auth.decorators import login_required
+from djkango.contrib import messages
+
+@login_required                                                 
+def delete_photo(request, room_pk, photo_pk):
+    user = request.user
+    try:
+        room = models.Room.objects.get(pk=room_pk)
+        if room.host.pk != user.pk:
+            messages.error(request, "Can't delete that photo")
+        else:
+            models.Photo.objects.filter(pk=photo_pk).delete()               # 또는 photo = models.Photo / photo.delete() 해도 된다고 함
+            messages.success(request, "Photo Deleted")
+        return redirect(reverse("rooms:photos", kwargs={"pk": room_pk}))
+    except models.Room.DoesNotExist:
+        return redirect(reverse("core:home"))
+    
+
+(templates/rooms/room_photos.html)
+
+    <div>
+        {% for photo in room.photos.all %}
+            <div>
+            <img src="{{photo.file.url}}" />
+            <span>{{photo.caption}}</span>
+            </div>
+            <div>
+                <a href="#">Edit</a>
+                <a href="{% url 'rooms:delete-photo' room.pk photo.pk %}">Delete</a>
+        {% endfor %}
+    </div>
+
+
+(rooms/views.py)
+class EditPhotoView(user_mixins.LoggedInOnlyView, UpdateView):
+
+    model = models.Photo                                                                        # 이걸 넣어주지 않으면 super()가 room을 주지 않을 것이라 함
+    template_name = "rooms/photo_edit.html"
+    fields = ("caption",)
+
+
+(templates/rooms/photo_edit.html)   : room_edit.html에서 양식 가져오자
+
+
+(rooms/urls.py)
+    path("<int:room_pk>/photos/<int:photo_pk>/edit/", views.EditPhotoView.as_view(), name="edit-photo")
+
+
+(templates/rooms/room_photos.html)
+
+    <div>
+        {% for photo in room.photos.all %}
+            <div>
+            <img src="{{photo.file.url}}" />
+            <span>{{photo.caption}}</span>
+            </div>
+            <div>
+                <a href="{% url 'rooms:edit-photo' room.pk photo.pk %}">Edit</a>
+                <a href="{% url 'rooms:delete-photo' room.pk photo.pk %}">Delete</a>
+        {% endfor %}
+    </div>
+
+
+(rooms/views.py)
+from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
+
+class EditPhotoView(user_mixins.LoggedInOnlyView, UpdateView):
+
+    model = models.Photo                                                                        
+    template_name = "rooms/photo_edit.html"
+    pk_url_kwarg = "photo_pk"                       # UpdateView는 pk로만 되어있어야 찾을 수 있다(pk_url_kwarg의 default가 'pk'로만 되어있어서). 따라서 url에서 pk로 지정해주지 않았다면 naming 변경해줘야 함
+    fields = ("caption",)
+    
+    def get_success_url(self):                      # request url에 대해서 access가 없어서 success_url을 method로 (즉, def get_success_url) 바꿔야 한다고 설명함.... 로직을 구현하려면 method가 필요하다고 해서..
+        room_pk = self.kwargs.get("room_pk")
+        return reverse("rooms.photos", kwargs={'pk': room_pk})
+
+
+-- message를 추가해보자
+(rooms/views.py)
+from django.urls import reverse_lazy - 삭제
+from django.contrib.messages.views import SuccessMessageMixin
+
+class EditPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin,UpdateView):
+
+    model = models.Photo                                                                        
+    template_name = "rooms/photo_edit.html"
+    pk_url_kwarg = "photo_pk"                       # UpdateView는 pk로만 되어있어야 찾을 수 있다(pk_url_kwarg의 default가 'pk'로만 되어있어서). 따라서 url에서 pk로 지정해주지 않았다면 naming 변경해줘야 함
+    success_message = "Photo Updated"
+    fields = ("caption",)
+    
+
+    def get_success_url(self):                      # request url에 대해서 access가 없어서 success_url을 method로 (즉, def get_success_url) 바꿔야 한다고 설명함.... 로직을 구현하려면 method가 필요하다고 해서..
+        room_pk = self.kwargs.get("room_pk")
+        return reverse("rooms.photos", kwargs={'pk': room_pk})
+
+
+(templates/rooms/room_photos.html)
+    <div>
+        <a href="{{room.get_absolute_url}}edit">Back to edit room</a>
+    </div>
+
+
+# 23.5
+
+(templates/rooms/room_photos.html)
+    <a href="#">Upload Photo</a>
+
+
+(templates/rooms/photo_create.html 생성)
+
+
+(rooms/views.py)
+from django.views.generic import FormView
+class AddPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin, FormView):
+
+    model = models.Photo
+    template_name = "rooms/photo_create.html"
+    fields = ("caption", "file")
+
+
+(rooms/urls.py)
+    path("<int:pk>/photos/add", views.AddPhotoView , name="add-photo")
+
+
+(templates/rooms/room_photos.html)
+    <a href="{% url 'rooms:add-photo' room.pk %}">Upload Photo</a>                  # 아직 저장이 안됨. photo는 room(rooms_photo.room_id)이 필요하기 때문 / form_class 활용 할 것임 / 사진을 저장해야 이용 가능한데, forms.py에 form을 추가 해줘야 한다...?
+
+
+(templates/rooms/photo_create.html 생성)
+
+
+(rooms/forms.py)
+class CreatePhotoForm(forms.ModelForm):
+    class Meta:
+        model = models.Photo
+        fields = ("caption", "file")
+        form_class = forms.CreatePhotoForm
+
+    def save(self, *args, **kwargs):                           
+        photo = super().save(commit=False)
+
+
+(rooms/views.py)
+from django.views.generic import FormView
+class AddPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin, FormView):
+
+    model = models.Photo
+    template_name = "rooms/photo_create.html"
+    fields = ("caption", "file")
+    form_class = forms.CreatePhotoForm
+
+    def form_valid(self, form):
+        pk = self.kwargs.get('pk')
+        form.save(pk)
+
+
+(rooms/forms.py)
+class CreatePhotoForm(forms.ModelForm):
+    class Meta:
+        model = models.Photo
+        fields = ("caption", "file")
+        form_class = forms.CreatePhotoForm
+ 
+    def save(self, pk, *args, **kwargs):                          
+        photo = super().save(commit=False)
+
+                                                   
+
+
+(rooms/views.py)
+from django.views.generic import FormView
+class AddPhotoView(user_mixins.LoggedInOnlyView, SuccessMessageMixin, FormView):
+
+    model = models.Photo
+    template_name = "rooms/photo_create.html"
+    fields = ("caption", "file")
+    form_class = forms.CreatePhotoForm
+
+    def form_valid(self, form):                                                   # form_valid 는 언제나 http response를 return 하는 것을 기억하자
+        pk = self.kwargs.get('pk')
+        form.save(pk)
+
+
+(rooms/forms.py)
+class CreatePhotoForm(forms.ModelForm):
+    class Meta:
+        model = models.Photo
+        fields = ("caption", "file")
+        form_class = forms.CreatePhotoForm
+ 
+    def save(self, pk, *args, **kwargs):                          
+        photo = super().save(commit=False)
+        room = models.Room.objects.get(pk=pk)
+        photo.room = room
+        photo.save()
+
+
+(rooms/views.py)
+from django.views.generic import FormView
+class AddPhotoView(user_mixins.LoggedInOnlyView, FormView):
+
+    model = models.Photo
+    template_name = "rooms/photo_create.html"
+    fields = ("caption", "file")
+    form_class = forms.CreatePhotoForm
+    
+
+    def form_valid(self, form):                                                             #SuccessMessageMixin을 쓰면 def form_valid를 쓸수 없다고 함...
+        pk = self.kwargs.get('pk')
+        form.save(pk)
+        messages.success(self.request, "Photo Uploaded")
+        return redirect(reverse("rooms:photos", kwargs={"pk": pk}))
