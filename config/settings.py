@@ -54,7 +54,7 @@ PROJECT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "django_countries", "storages"
+    "django_countries", "storages",
 ]
 # after django-storages installing, "storages" must be included in INSTALLED_APPS?
 
@@ -163,6 +163,12 @@ MEDIA_URL = "/media/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 if not DEBUG:
     DEFAULT_FILE_STORAGE = 'config.custom_storages.UploadStorage'
