@@ -1361,6 +1361,10 @@ td {
   width: 80px;
 }
 
+.hidden {
+  display: none;
+}
+
 @media screen and (max-width: 1560px) {
   .list-bucket {
     display: none;

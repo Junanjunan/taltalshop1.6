@@ -299,8 +299,7 @@ class ItemPayCountView(View):
             filter_args = {}
             filter_args["name__contains"] = name
             filter_args["item_category__contains"] = item_category
-            searched = models.Item.objects.filter(
-                **filter_args).order_by('-pay_count')
+            searched = models.Item.objects.filter(**filter_args).order_by('-pay_count')
         except:
             filter_args = {}
             filter_args["name__contains"] = name

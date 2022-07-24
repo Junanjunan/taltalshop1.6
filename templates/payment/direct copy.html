@@ -8,6 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
     <title>탈탈 결제</title>
 </head>
@@ -113,7 +117,6 @@
             <a href="{% url 'home:home' %}"><button class="white-btn">계속 쇼핑하기</button></a>
             <button class="pay-button">결제하기</button>
         </div>
-        <div class="user-id hidden">{{request.user.id}}</div>
     </div>
     
 
@@ -152,9 +155,9 @@
                             pay_method: rsp.pay_method,
                             receiver: deliUser.innerHTML,
                             address: deliAddress.innerHTML,
-                            email: rsp.buyer_email,
                             phone_number: deliPhoneNumber.innerHTML,
                             require: deliRequire.innerHTML,
+                            email: rsp.buyer_email,
                             csrfmiddlewaretoken: "{{ csrf_token }}"
                         }
                     }).done(function(data){
