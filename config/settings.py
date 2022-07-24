@@ -170,6 +170,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
+IAMPORT_KEY = os.environ.get("IAMPORT_KEY")
+IAMPORT_SECRET = os.environ.get("IAMPORT_SECRET")
+
 if not DEBUG:
     DEFAULT_FILE_STORAGE = 'config.custom_storages.UploadStorage'
     STATICFILES_STORAGE = 'config.custom_storages.StaticStorage'
