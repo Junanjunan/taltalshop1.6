@@ -43,6 +43,7 @@ class PaySaveView(LoggedInOnlyView, View):
         user = request.user
         imp_uid = request.POST.get("imp_uid")
         merchant_uid = request.POST.get("merchant_uid")
+        name = request.POST.get("name")
         item_pk = request.POST.get("item_pk")
         item = items_models.Item.objects.get(pk=item_pk)
         price = item.price
@@ -193,6 +194,7 @@ class PaySaveCartView(LoggedInOnlyView, View):
         merchant_uid = request.POST.get("merchant_uid")
         paid_amount = request.POST.get('paid_amount')
         pay_method = request.POST.get('pay_method')
+        name = request.POST.get("name")
 
         token_access_data = {
             'imp_key': settings.IAMPORT_KEY,

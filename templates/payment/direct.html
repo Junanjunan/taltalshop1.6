@@ -102,7 +102,7 @@
                             <span><input type="radio" name="pay_method" value="trans">계좌이체</span>
                             <span><input type="radio" name="pay_method" value="card">신용/체크카드</span>
                             <span><input type="radio" name="pay_method" value="phone" checked="checked">휴대폰</span>
-                            <span><input type="radio" name="pay_method" value="vbank">무통장입금(가상계좌)</span>
+                            <span><input type="radio" name="pay_method" value="samsung">삼성페이</span>
                         </div>
                     </td>
                 </tr>
@@ -136,7 +136,7 @@
                 merchant_uid: merchant_uid,
                 name: "{{item.name}}",
                 amount: "{{amount_with_deli}}",
-                buyer_email: "{{request.user.email}}"
+                buyer_email: "{{request.user.email}}",
             }, function(rsp){
                 if(rsp.success){
                     $.ajax({
