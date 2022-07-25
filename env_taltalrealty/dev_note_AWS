@@ -1,0 +1,2 @@
+413 Request Entity Too Large
+ -https://stackoverflow.com/questions/18908426/increasing-client-max-body-size-in-nginx-conf-on-aws-elastic-beanstalk
