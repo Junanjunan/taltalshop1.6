@@ -1,4 +1,7 @@
+import os
+import datetime
 from django.db import models
+from uuid import uuid4
 from django_countries.fields import CountryField
 
 
@@ -62,15 +65,23 @@ class Item(models.Model):
             return None
 
 
+def path_and_rename(instance, filename):
+    upload_to = 'uploads'
+    file_origin_name = filename.split('.')[0]
+    ext = filename.split('.')[-1]
+    now = datetime.datetime.now()
+    filename = '{}_{}_{}.{}'.format(file_origin_name, now,uuid4().hex, ext)
+    return os.path.join(upload_to, filename)
+
 class ItemPhoto(models.Model):
-    photo = models.ImageField()
+    photo = models.ImageField(upload_to = path_and_rename)
     name = models.CharField(max_length=50, null=True, blank=True)
     item = models.ForeignKey("items.Item", related_name="photos", on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey("users.User", related_name="photos", on_delete=models.CASCADE)
     review = models.ForeignKey("reviews.Review", related_name="photos", on_delete=models.CASCADE, null=True, blank=True)
 
 class ItemDetailPage(models.Model):
-    photo = models.ImageField()
+    photo = models.ImageField(upload_to = path_and_rename)
     name = models.CharField(max_length=50, null=True, blank=True)
     item = models.ForeignKey("items.Item", related_name="detail_pages", on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey("users.User", related_name="detail_pages", on_delete=models.CASCADE)

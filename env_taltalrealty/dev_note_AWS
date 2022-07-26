@@ -1,2 +1,29 @@
 413 Request Entity Too Large
  -https://stackoverflow.com/questions/18908426/increasing-client-max-body-size-in-nginx-conf-on-aws-elastic-beanstalk
+
+    I have tried all .ebextensions method of adding implementation level configuration and it didn't helped me in the latest Amazon Linux AMI. I have did a lot research and after going through the logs i can find the deployment task runner is checking for a folder called .platform everytime and i thought of add one just like the .ebextensions. Below is the settings i have done in my root folder of my project.
+
+    Add the below folder setup in the root level of your project folder.
+
+    Folder structure (.platform/nginx/conf.d/proxy.conf)
+
+    .platform/
+            nginx/
+                conf.d/
+                        proxy.conf
+            00_myconf.config
+    Content of File 1 - proxy.conf (Inside .platform/nginx/conf.d/ folder)
+
+    client_max_body_size 50M;
+    Content of File 2 - 00_myconf.config (Inside .platform/ folder)
+
+    container_commands:
+    01_reload_nginx:
+        command: "service nginx reload"
+    Care full with the extensions. First file is .conf and second file is .config.
+
+    Now redeploy your project to Amazon Elastic Beanstalk and you will see the magic. This configuration will be added to all your EC2 instances, created as part of auto scaling.
+
+    Detailed folder structure below.
+
+    --> 위와 같이 했더니 진짜로 되었음!
