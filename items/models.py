@@ -66,12 +66,11 @@ class Item(models.Model):
 
 
 def path_and_rename(instance, filename):
-    upload_to = 'uploads'
     file_origin_name = filename.split('.')[0]
     ext = filename.split('.')[-1]
     now = datetime.datetime.now()
     filename = '{}_{}_{}.{}'.format(file_origin_name, now,uuid4().hex, ext)
-    return os.path.join(upload_to, filename)
+    return os.path.join(filename)
 
 class ItemPhoto(models.Model):
     photo = models.ImageField(upload_to = path_and_rename)
