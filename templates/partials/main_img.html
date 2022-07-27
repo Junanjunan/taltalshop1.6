@@ -8,7 +8,7 @@
             {% for photo in photos %}
             <div class="relative slide-item-main">
                 <a href="{% url 'items:search' %}?name={{name__contains}}&category={{photo.item_category}}">
-                    <img class="main_photo" src="{{photo.main_photo.url}}" alt="{{photo.name}}" width="1100px" height="300px" />
+                    <img class="main_photo" src="{{photo.main_photo.url}}" alt="{{photo.name}}" width="1100px" height="400px" />
                     <div class="main_photo_name">{{photo.name}}</div>
                 </a>
             </div>
