@@ -239,13 +239,13 @@
         </div>
     </div>
     <div class="flex item-nav-set mlmrauto">
-        <div class="item-nav">상품상세</div>
-        <div class="item-nav">상품평</div>
-        <div class="item-nav">상품문의</div>
-        <div class="item-nav">배송/교환/반품 안내</div>
+        <a href="#nav-detail"><div class="item-nav">상품상세</div></a>
+        <a href="#nav-review"><div class="item-nav">상품평</div></a>
+        <a href="#nav-inquiry"><div class="item-nav">상품문의</div></a>
+        <a href="#nav-deli"><div class="item-nav">배송/교환/반품 안내</div></a>
     </div>
     <div>
-        <div>상품종류:{{item.get_item_category_display}}</div>
+        <div id="nav-detail">상품종류:{{item.get_item_category_display}}</div>
         <table>
             <colgroup>
             <col span="1" class="col-title">
@@ -308,7 +308,7 @@
 
     <div>
         <div>
-            <div>
+            <div  id="nav-review">
                 <span class="detail-title">상품평</span>
                 <a href="{% url 'reviews:waiting-list' %}">상품평 쓰기</a>
             </div>
@@ -368,7 +368,7 @@
         </div>
         <br>
         <hr>
-        <div class="flex space-between">
+        <div class="flex space-between" id="nav-inquiry">
             <div class="detail-title">상품문의</div>
             {% if user.is_authenticated %}
                 <button class="modal-btn" onclick=modalling>문의하기</button>
@@ -694,6 +694,6 @@
             }
         })
     }
-    
+
 </script>
 {% endblock content %}
