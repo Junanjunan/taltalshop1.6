@@ -387,6 +387,13 @@ a {
   left: -85px;
 }
 
+.lately-name{
+  width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis; 
+}
+
 .lately-price {
   color: #4285f4;
   font-weight: 900;
