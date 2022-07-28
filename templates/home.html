@@ -17,7 +17,7 @@
                 {% for i in shampoo_list %}
                 <div class="home-item-list slide-item1">
                     <a href="{% url 'items:item-detail' i.pk %}"><img src="{{i.first_photo}}" alt="{{i.name}}" width="265px" height="265px"></a>
-                    <div>{{i.name}}</div>
+                    <div class="item-list-name">{{i.name}}</div>
                     <div class="item-price">{{i.price}}<span class="won">원</span></div>
                 </div>
                 {% endfor %}
