@@ -1377,3 +1377,15 @@ td {
     display: none;
   }
 }
+
+.footer{
+  margin-top: 50px;
+  
+}
+
+.footer-inner{
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
