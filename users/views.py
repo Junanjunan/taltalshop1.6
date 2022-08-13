@@ -542,7 +542,6 @@ def naver_callback(request):
     response = profile_json.get("response")
     email = response.get("email")
     first_name = response.get("email")
-    print(response)
     try:
         user = models.User.objects.get(email=email)
         if user.login_method != models.User.LOGIN_NAVER:
