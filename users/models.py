@@ -1,5 +1,6 @@
 import uuid
 from django.conf import settings
+from django.urls import reverse
 from django.db import models
 from django.contrib import messages
 from django.contrib.auth.models import AbstractUser
@@ -64,6 +65,9 @@ class User(AbstractUser):
             self.save()
         else:
             messages.error(self.request, "E!!!!!")
+
+    def get_absolute_url(self):
+        return reverse("users:status", kwargs={"pk": self.pk})
 
 
 class Bucket(models.Model):

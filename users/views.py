@@ -330,7 +330,7 @@ class RequestPasswordResetEmail(LoggedOutOnlyView, View):
                 }
                 link = reverse('users:reset-user-password', kwargs={
                                'uidb64': email_contents['uid'], 'token': email_contents['token']})
-                email_subject = '탈탈부동산 비밀번호 재설정 이메일입니다'
+                email_subject = '탈탈샵 비밀번호 재설정 이메일입니다'
                 reset_url = 'http://' + current_site.domain + link
                 html_message = render_to_string(
                     "emails/password_reset_email.html", {
