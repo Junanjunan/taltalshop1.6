@@ -480,8 +480,11 @@ def kakao_callback(request):
         kakao_id = profile_json.get("id")
         kakao_account = profile_json.get("kakao_account")
         email = kakao_account.get("email")
-        nickname = properties.get("nickname")
-        profile_image = properties.get("profile_image")
+        try:
+            nickname = properties.get("nickname")
+            profile_image = properties.get("profile_image")
+        except:
+            pass
         try:
             user = models.User.objects.get(email=email)
             if user.login_method != models.User.LOGIN_KAKAO:
