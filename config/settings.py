@@ -173,6 +173,8 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 IAMPORT_KEY = os.environ.get("IAMPORT_KEY")
 IAMPORT_SECRET = os.environ.get("IAMPORT_SECRET")
 
+SWEETTRACKER_KEY = os.environ.get("SWEETTRACKER_KEY")
+
 if not DEBUG:
     DEFAULT_FILE_STORAGE = 'config.custom_storages.UploadStorage'
     STATICFILES_STORAGE = 'config.custom_storages.StaticStorage'
