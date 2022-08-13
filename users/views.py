@@ -476,15 +476,12 @@ def kakao_callback(request):
             headers={
                 "Authorization": f"Bearer {access_token}", })
         profile_json = profile_request.json()
-        properties = profile_json.get("properties")
-        kakao_id = profile_json.get("id")
+        # properties = profile_json.get("properties")
+        # kakao_id = profile_json.get("id")
         kakao_account = profile_json.get("kakao_account")
         email = kakao_account.get("email")
-        try:
-            nickname = properties.get("nickname")
-            profile_image = properties.get("profile_image")
-        except:
-            pass
+        # nickname = properties.get("nickname")
+        # profile_image = properties.get("profile_image")
         try:
             user = models.User.objects.get(email=email)
             if user.login_method != models.User.LOGIN_KAKAO:
@@ -494,16 +491,16 @@ def kakao_callback(request):
             user = models.User.objects.create(
                 email=email,
                 username=email,
-                first_name=nickname,
+                # first_name=nickname,
                 login_method=models.User.LOGIN_KAKAO,
             )
             user.set_unusable_password()
             user.email_verified = True
             user.save()
-            if profile_image is not None:
-                photo_request = requests.get(profile_image)
-                user.avatar.save(f"{nickname}-avatar",
-                                 ContentFile(photo_request.content))
+            # if profile_image is not None:
+            #     photo_request = requests.get(profile_image)
+            #     user.avatar.save(f"{nickname}-avatar",
+            #                      ContentFile(photo_request.content))
         login(request, user)
         return redirect(reverse("home:home"))
     except KakaoException:
