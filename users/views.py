@@ -400,7 +400,7 @@ def github_login(request):
         redirect_uri = "http://127.0.0.1:8000/users/login/github/callback/"
     else:
         client_id = os.environ.get("GH_ID_DEPLOY")
-        redirect_uri = "http://taltalrealty12-dev.ap-northeast-2.elasticbeanstalk.com/users/login/github/callback/"
+        redirect_uri = "http://taltalshop161-dev.ap-northeast-2.elasticbeanstalk.com/users/login/github/callback/"
     return redirect(f"https://github.com/login/oauth/authorize?client_id={client_id}&redirect_uri={redirect_uri}&scope=read:user")
 
 
@@ -450,7 +450,7 @@ def kakao_login(request):
         REDIRECT_URI = "http://127.0.0.1:8000/users/login/kakao/callback/"
     else:
         REST_API_KEY = os.environ.get("KAKAO_ID_DEPLOY")
-        REDIRECT_URI = "http://taltalrealty12-dev.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback/"
+        REDIRECT_URI = "http://taltalshop161-dev.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback/"
     return redirect(f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={REDIRECT_URI}&response_type=code")
 
 
@@ -465,7 +465,7 @@ def kakao_callback(request):
             REDIRECT_URI = "http://127.0.0.1:8000/users/login/kakao/callback/"
         else:
             REST_API_KEY = os.environ.get("KAKAO_ID_DEPLOY")
-            REDIRECT_URI = "http://taltalrealty12-dev.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback/"
+            REDIRECT_URI = "http://taltalshop161-dev.ap-northeast-2.elasticbeanstalk.com/users/login/kakao/callback/"
         code = request.GET.get("code")
         token_request = requests.get(
             f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&redirect_uri={REDIRECT_URI}&code={code}")
@@ -513,7 +513,7 @@ def naver_login(request):
         redirect_uri = "http://127.0.0.1:8000/users/login/naver/callback/"
     else:
         client_id = os.environ.get("NAVER_ID_DEPLOY")
-        redirect_uri = "http://taltalrealty12-dev.ap-northeast-2.elasticbeanstalk.com/users/login/naver/callback/"
+        redirect_uri = "http://taltalshop161-dev.ap-northeast-2.elasticbeanstalk.com/users/login/naver/callback/"
     state = uuid.uuid4().hex[:20]
     return redirect(f"https://nid.naver.com/oauth2.0/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}&state={state}")
 
