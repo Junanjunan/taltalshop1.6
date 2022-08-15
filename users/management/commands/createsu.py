@@ -11,7 +11,7 @@ class Command(BaseCommand):
             User.objects.get(username="taltal")
             self.stdout.write(self.style.SUCCESS(f"Superuser Exists"))
         except:
-            User.objects.create_superuser("taltal", "taltalrealty@gmail.com", "a52848625@")
+            User.objects.create_superuser("taltal", "taltalrealty@gmail.com", "123")
             self.stdout.write(self.style.SUCCESS(f"Superuser Created"))
         
         # try, except 어떤게 잘 실행되었는지는 eb logs --all -> cfn-init-cmd.log를 보면 된다
