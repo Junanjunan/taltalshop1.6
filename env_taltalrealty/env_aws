@@ -43,7 +43,7 @@
       - win 붙은건 window 환경에서 사용되는 것이고, aws 는 리눅스환경이라 삭제해주면 되는거라고 함..
 
   PostgreSQL : 12.5.15-R1 선택했음 -> 9.6.15-R1 선택해서 재설치
-  비번: a52848625a
+
 
   (requirements.txt)
   psycopg2==2.8.6

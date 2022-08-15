@@ -36,7 +36,7 @@
 
     9. 서버 꺼준 후(ctrl+c) python manage.py migrate 해주고 다시  python manage.py runserver:
 
-    10. 유저 생성 : python manage.py createsuperuser  (내가 만든 아이디: taltal, 52848625a)
+    10. 유저 생성 : python manage.py createsuperuser
 
     11. python manage.py makemigrations : 장고가 우리의 models를 확인하고 migration 파일을 생성 - 변경된 데이터가 없으면 no changes detected 
 
