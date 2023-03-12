@@ -2,177 +2,232 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
-    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'styles.css' %}" />
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+    ></script>
     <title>탈탈 결제</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="second-body">
-        <div><a href="{% url 'home:home' %}"><img src="{% static 'logo/taltal_logo.PNG' %}" alt="taltal_logo" width="150px"></a></div>
-        <hr>
-        <div class="page-title">주문/결제</div>
-        <div>
-            <h3>구매자 정보</h3>
-            <table>
-                <colgroup>
-                    <col span="1" class="col-title">
-                    <col span="1" class="col-des">
-                </colgroup>
-                <tr class="tr-top">
-                    <td>이름</td>
-                    <td>{{request.user.first_name}}</td>
-                </tr>
-                <tr>
-                    <td>이메일</td>
-                    <td>{{request.user.email}}</td>
-                </tr>
-                <tr>
-                    <td>휴대폰 번호</td>
-                    <td>010-8635-7811</td>
-                </tr>
-            </table>
+      <div>
+        <a href="{% url 'home:home' %}"
+          ><img
+            src="{% static 'logo/taltal_logo.PNG' %}"
+            alt="taltal_logo"
+            width="150px"
+        /></a>
+      </div>
+      <hr />
+      <div class="page-title">주문/결제</div>
+      <div>
+        <h3>구매자 정보</h3>
+        <table>
+          <colgroup>
+            <col span="1" class="col-title" />
+            <col span="1" class="col-des" />
+          </colgroup>
+          <tr class="tr-top">
+            <td>이름</td>
+            <td>{{request.user.first_name}}</td>
+          </tr>
+          <tr>
+            <td>이메일</td>
+            <td>{{request.user.email}}</td>
+          </tr>
+          <tr>
+            <td>휴대폰 번호</td>
+            <td>010-8635-7811</td>
+          </tr>
+        </table>
+      </div>
+      <br />
+      <div>
+        <div class="flex">
+          <h3>받는사람 정보</h3>
+          <button class="change-address-button">배송지 변경</button>
         </div>
-        <br>
-        <div>
-            <div class="flex">
-                <h3>받는사람 정보</h3>
-                <button class="change-address-button">배송지 변경</button>
-            </div>
-            <table>
-                <colgroup>
-                    <col span="1" class="col-title">
-                    <col span="1" class="col-des">
-                </colgroup>
-                <tr class="tr-top">
-                    <td>이름</td>
-                    <td class="deli-user">{{request.user.first_name}}</td>
-                </tr>
-                <tr>
-                    <td>배송주소</td>
-                    <td class="deli-address">{{request.user.address}}</td>
-                </tr>
-                <tr>
-                    <td>연락처</td>
-                    <td class="deli-phone-number">{{request.user.phone_number}}</td>
-                </tr>
-                <tr>
-                    <td>배송 요청사항</td>
-                    <td class="deli-require">{{request.user.delivery_requirement}}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="basic-box"><input type="checkbox"><span>주말 및 공휴일 수령 가능</span></div>
-        <br>
-        <div>
-            <h3>배송 1건 중 1</h3>
-            <table>
-                <tr><td>내일(일) ~~ 도착 보장</td></tr>
-                <tr><td>{{item.name}}, {{item_count}}개</td></tr>
-            </table>
-        </div>
-        <br>
-        <div>
-            <h3>결제정보</h3>
-            <table>
-                <colgroup>
-                    <col span="1" class="col-title">
-                    <col span="1" class="col-des">
-                </colgroup>
-                <tr class="tr-top">
-                    <td>총상품가격</td>
-                    <td>{{amount}}원</td>
-                </tr>
-                <tr>
-                    <td>배송비</td>
-                    <td>{{item.deli_fee}}원</td>
-                </tr>
-                <tr>
-                    <td>총결제금액</td>
-                    <td>{{amount_with_deli}}원</td>
-                </tr>
-                <tr>
-                    <td>결제방법</td>
-                    <td>
-                        <div class="pay-method">
-                            <span><input type="radio" name="pay_method" value="trans">계좌이체</span>
-                            <span><input type="radio" name="pay_method" value="card">신용/체크카드</span>
-                            <span><input type="radio" name="pay_method" value="phone" checked="checked">휴대폰</span>
-                            <span><input type="radio" name="pay_method" value="samsung">삼성페이</span>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <hr>
-        <div class="width100 flex-center">
-            <a href="{% url 'home:home' %}"><button class="white-btn">계속 쇼핑하기</button></a>
-            <button class="pay-button">결제하기</button>
-        </div>
-        <div class="user-id hidden">{{request.user.id}}</div>
+        <table>
+          <colgroup>
+            <col span="1" class="col-title" />
+            <col span="1" class="col-des" />
+          </colgroup>
+          <tr class="tr-top">
+            <td>이름</td>
+            <td class="deli-user">{{request.user.first_name}}</td>
+          </tr>
+          <tr>
+            <td>배송주소</td>
+            <td class="deli-address">{{request.user.address}}</td>
+          </tr>
+          <tr>
+            <td>연락처</td>
+            <td class="deli-phone-number">{{request.user.phone_number}}</td>
+          </tr>
+          <tr>
+            <td>배송 요청사항</td>
+            <td class="deli-require">{{request.user.delivery_requirement}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="basic-box">
+        <input type="checkbox" /><span>주말 및 공휴일 수령 가능</span>
+      </div>
+      <br />
+      <div>
+        <h3>배송 1건 중 1</h3>
+        <table>
+          <tr>
+            <td>내일(일) ~~ 도착 보장</td>
+          </tr>
+          <tr>
+            <td>{{item.name}}, {{item_count}}개</td>
+          </tr>
+        </table>
+      </div>
+      <br />
+      <div>
+        <h3>결제정보</h3>
+        <table>
+          <colgroup>
+            <col span="1" class="col-title" />
+            <col span="1" class="col-des" />
+          </colgroup>
+          <tr class="tr-top">
+            <td>총상품가격</td>
+            <td>{{amount}}원</td>
+          </tr>
+          <tr>
+            <td>배송비</td>
+            <td>{{item.deli_fee}}원</td>
+          </tr>
+          <tr>
+            <td>총결제금액</td>
+            <td>{{amount_with_deli}}원</td>
+          </tr>
+          <tr>
+            <td>결제방법</td>
+            <td>
+              <div class="pay-method">
+                <span
+                  ><input
+                    type="radio"
+                    name="pay_method"
+                    value="trans"
+                  />계좌이체</span
+                >
+                <span
+                  ><input
+                    type="radio"
+                    name="pay_method"
+                    value="card"
+                  />신용/체크카드</span
+                >
+                <span
+                  ><input
+                    type="radio"
+                    name="pay_method"
+                    value="phone"
+                    checked="checked"
+                  />휴대폰</span
+                >
+                <span
+                  ><input
+                    type="radio"
+                    name="pay_method"
+                    value="samsung"
+                  />삼성페이</span
+                >
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <hr />
+      <div class="width100 flex-center">
+        <a href="{% url 'home:home' %}"
+          ><button class="white-btn">계속 쇼핑하기</button></a
+        >
+        <button class="pay-button">결제하기</button>
+      </div>
+      <div class="user-id hidden">{{request.user.id}}</div>
     </div>
-    
 
     <script>
-        const pay_button = document.querySelector(".pay-button");
-        var IMP = window.IMP;
-        var merchant_uid = "{{merchant_uid}}"
-        var deliUser = document.querySelector(".deli-user");
-        var deliAddress = document.querySelector(".deli-address");
-        var deliPhoneNumber = document.querySelector(".deli-phone-number");
-        var deliRequire = document.querySelector(".deli-require");
-        IMP.init("imp34020289");
+      const pay_button = document.querySelector(".pay-button");
+      var IMP = window.IMP;
 
-        pay_button.addEventListener("click", requestPay);
-        function requestPay(){
-            var pay_method = $(".pay-method input:checked").val();
-            IMP.request_pay({
-                pg: "html5_inicis",
-                pay_method: pay_method,
-                merchant_uid: merchant_uid,
-                name: "{{item.name}}",
-                amount: "{{amount_with_deli}}",
-                buyer_email: "{{request.user.email}}",
-            }, function(rsp){
-                if(rsp.success){
-                    $.ajax({
-                        method: "POST",
-                        url: "{% url 'payments:save' %}",
-                        data: {
-                            imp_uid: rsp.imp_uid,
-                            merchant_uid: rsp.merchant_uid,
-                            name: rsp.name,
-                            item_pk: "{{item.pk}}",
-                            item_count: "{{item_count}}",
-                            paid_amount: rsp.paid_amount,
-                            pay_method: rsp.pay_method,
-                            receiver: deliUser.innerHTML,
-                            address: deliAddress.innerHTML,
-                            email: rsp.buyer_email,
-                            phone_number: deliPhoneNumber.innerHTML,
-                            require: deliRequire.innerHTML,
-                            csrfmiddlewaretoken: "{{ csrf_token }}"
-                        }
-                    }).done(function(data){
-                        alert("결제 성공");
-                        window.location.href= "{% url 'payments:done' merchant_uid %}"
-                    });
-                } else{
-                    alert("결제 실패");
-                }
-            });
-        };
+      var merchant_uid = "{{merchant_uid}}";
+      var deliUser = document.querySelector(".deli-user");
+      var deliAddress = document.querySelector(".deli-address");
+      var deliPhoneNumber = document.querySelector(".deli-phone-number");
+      var deliRequire = document.querySelector(".deli-require");
+      IMP.init("imp34020289");
 
-        const changeAddressButton = document.querySelector(".change-address-button");
-        const userId = document.querySelector(".user-id").innerText;
+      pay_button.addEventListener("click", requestPay);
+      function requestPay() {
+        var pay_method = $(".pay-method input:checked").val();
+        IMP.request_pay(
+          {
+            pg: "html5_inicis",
+            pay_method: pay_method,
+            merchant_uid: merchant_uid,
+            name: "{{item.name}}",
+            amount: parseInt("{{amount_with_deli}}"),
+            buyer_email: "{{request.user.email}}",
+          },
+          function (rsp) {
+            if (rsp.success) {
+              $.ajax({
+                method: "POST",
+                url: "{% url 'payments:save' %}",
+                data: {
+                  imp_uid: rsp.imp_uid,
+                  merchant_uid: rsp.merchant_uid,
+                  name: rsp.name,
+                  item_pk: "{{item.pk}}",
+                  item_count: "{{item_count}}",
+                  paid_amount: rsp.paid_amount,
+                  pay_method: rsp.pay_method,
+                  receiver: deliUser.innerHTML,
+                  address: deliAddress.innerHTML,
+                  email: rsp.buyer_email,
+                  phone_number: deliPhoneNumber.innerHTML,
+                  require: deliRequire.innerHTML,
+                  csrfmiddlewaretoken: "{{ csrf_token }}",
+                },
+              }).done(function (data) {
+                alert("결제 성공");
+                window.location.href = "{% url 'payments:done' merchant_uid %}";
+              });
+            } else {
+              alert("결제 실패");
+            }
+          }
+        );
+      }
 
-        changeAddressButton.addEventListener("click", function(){
-            var pop = window.open(`/payments/select-address/${userId}/`, "pop", "width=570, height=420, scrollbars=yes, resizable=yes");
-        })        
+      const changeAddressButton = document.querySelector(
+        ".change-address-button"
+      );
+      const userId = document.querySelector(".user-id").innerText;
+
+      changeAddressButton.addEventListener("click", function () {
+        var pop = window.open(
+          `/payments/select-address/${userId}/`,
+          "pop",
+          "width=570, height=420, scrollbars=yes, resizable=yes"
+        );
+      });
     </script>
-</body>
+  </body>
 </html>
