@@ -185,4 +185,4 @@ IAMPORT_SECRET = IAMPORT_REST_API_SECRET
 #     )
 
 
-CORS_ALLOWED_ORIGINS = ["https://taltalshop.store"]
+CORS_ALLOWED_ORIGINS = ["https://taltalshop.store", "http://taltalshop.store"]
