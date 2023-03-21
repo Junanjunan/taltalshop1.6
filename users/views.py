@@ -25,7 +25,7 @@ from . import forms, models
 from items import models as items_models
 from payments import models as payments_models
 from .jusoConfmKey import jusoConfmKey
-from config.local_settings import DEPLOY_URL, GH_ID_DEPLOY, GH_SECRET_DEPLOY, KAKAO_ID_DEPLOY, NAVER_ID_DEPLOY, NAVER_SECRET_DEPLOY
+from config.local_settings import DEPLOY_URL, GH_ID_DEPLOY, GH_SECRET_DEPLOY, KAKAO_ID_DEPLOY, NAVER_ID_DEPLOY, NAVER_SECRET_DEPLOY, GH_ID_LOCAL, GH_SECRET_LOCAL, KAKAO_ID_LOCAL, NAVER_ID_LOCAL, NAVER_SECRET_LOCAL
 
 
 class LoggedOutOnlyView(UserPassesTestMixin, View):
@@ -76,7 +76,7 @@ class LoginView(LoggedOutOnlyView, FormView):
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
         user = authenticate(self.request, username=email, password=password)
-        user_model = models.User.objects.get(email=email)
+        user_model = models.User.objects.get(username=email)
         login(self.request, user)
         return super().form_valid(form)
 
@@ -397,7 +397,7 @@ class SendingPasswordEmailDone(LoggedOutOnlyView, View):
 
 def github_login(request):
     if settings.DEBUG == True:
-        client_id = os.environ.get("GH_ID")
+        client_id = GH_ID_LOCAL
         redirect_uri = "http://127.0.0.1:8000/users/login/github/callback/"
     else:
         client_id = GH_ID_DEPLOY
@@ -407,8 +407,8 @@ def github_login(request):
 
 def github_callback(request):
     if settings.DEBUG == True:
-        client_id = os.environ.get("GH_ID")
-        client_secret = os.environ.get("GH_SECRET")
+        client_id = GH_ID_LOCAL
+        client_secret = GH_SECRET_LOCAL
     else:
         client_id = GH_ID_DEPLOY
         client_secret = GH_SECRET_DEPLOY
@@ -427,7 +427,7 @@ def github_callback(request):
     email = profile_json.get("email")
     first_name = profile_json.get("name")
     try:
-        user = models.User.objects.get(email=email)
+        user = models.User.objects.get(username=email)
         if user.login_method != models.User.LOGIN_GITHUB:
             messages.error(request, "다른 경로로 가입되어있는 이메일입니다")
             return redirect("users:login")
@@ -447,7 +447,7 @@ def github_callback(request):
 
 def kakao_login(request):
     if settings.DEBUG == True:
-        REST_API_KEY = os.environ.get("KAKAO_ID")
+        REST_API_KEY = KAKAO_ID_LOCAL
         REDIRECT_URI = "http://127.0.0.1:8000/users/login/kakao/callback/"
     else:
         REST_API_KEY = KAKAO_ID_DEPLOY
@@ -462,7 +462,7 @@ class KakaoException(Exception):
 def kakao_callback(request):
     try:
         if settings.DEBUG == True:
-            REST_API_KEY = os.environ.get("KAKAO_ID")
+            REST_API_KEY = KAKAO_ID_LOCAL
             REDIRECT_URI = "http://127.0.0.1:8000/users/login/kakao/callback/"
         else:
             REST_API_KEY = KAKAO_ID_DEPLOY
@@ -481,10 +481,13 @@ def kakao_callback(request):
         # kakao_id = profile_json.get("id")
         kakao_account = profile_json.get("kakao_account")
         email = kakao_account.get("email")
+        if email is None:
+            messages.error(request, "이메일 이용에 동의하지 않으셨습니다.")
+            return redirect("users:login")
         # nickname = properties.get("nickname")
         # profile_image = properties.get("profile_image")
         try:
-            user = models.User.objects.get(email=email)
+            user = models.User.objects.get(username=email)
             if user.login_method != models.User.LOGIN_KAKAO:
                 messages.error(request, "다른 경로로 가입되어있는 이메일입니다")
                 return redirect("users:login")
@@ -510,7 +513,7 @@ def kakao_callback(request):
 
 def naver_login(request):
     if settings.DEBUG == True:
-        client_id = os.environ.get("NAVER_ID")
+        client_id = NAVER_ID_LOCAL
         redirect_uri = "http://127.0.0.1:8000/users/login/naver/callback/"
     else:
         client_id = NAVER_ID_DEPLOY
@@ -521,8 +524,8 @@ def naver_login(request):
 
 def naver_callback(request):
     if settings.DEBUG == True:
-        client_id = os.environ.get("NAVER_ID")
-        client_secret = os.environ.get("NAVER_SECRET")
+        client_id = NAVER_ID_LOCAL
+        client_secret = NAVER_SECRET_LOCAL
     else:
         client_id = NAVER_ID_DEPLOY
         client_secret = NAVER_SECRET_DEPLOY
@@ -544,7 +547,7 @@ def naver_callback(request):
     email = response.get("email")
     first_name = response.get("email")
     try:
-        user = models.User.objects.get(email=email)
+        user = models.User.objects.get(username=email)
         if user.login_method != models.User.LOGIN_NAVER:
             messages.error(request, "다른 경로로 가입되어있는 이메일입니다")
             return redirect("users:login")
