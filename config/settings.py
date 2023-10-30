@@ -188,3 +188,7 @@ IAMPORT_SECRET = IAMPORT_REST_API_SECRET
 
 
 CORS_ALLOWED_ORIGINS = ["https://taltalshop.store", "http://taltalshop.store"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://taltalshop.store",
+]
