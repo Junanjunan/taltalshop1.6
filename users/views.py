@@ -83,7 +83,6 @@ class LoginView(LoggedOutOnlyView, FormView):
 
 def log_out(request):
     logout(request)
-    print(requests.__version__)
     return redirect(reverse("home:home"))
 
 
