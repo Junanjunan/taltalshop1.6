@@ -292,9 +292,6 @@
     </div>
     <div class="photo-zone height2000">
         {% if item.detail_pages %}
-        {% if item.youtube_url %}
-        <div><iframe width="100%" height="500px" src="https://www.youtube.com/embed/{{item.youtube_url}}"></iframe></div>
-        {% endif %}  
         {% for i in item.detail_pages.all %}
             <div><img width="900px" src="{{i.photo.url}}" alt="photo"></div>
         {% endfor %}
