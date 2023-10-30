@@ -52,7 +52,7 @@ class User(AbstractUser):
                 )
             else:
                 html_message = render_to_string(
-                    "emails/verify_email_deploy.html", {"secret": secret}
+                    "emails/verify_email_deploy.html", {"DEPLOY_URL": settings.DEPLOY_URL, "secret": secret}
                 )
             send_mail(
                 "탈탈샵 회원가입 인증 메일입니다.",
